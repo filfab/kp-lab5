@@ -17,14 +17,34 @@ import javafx.stage.Stage;
 
 
 public class App extends Application {
+    /**
+     * Property containing the x mouse position on the canvas.
+     * If the cursor is outside of the canvas, the value is -1.
+     */
     DoubleProperty mouseX = new SimpleDoubleProperty();
+    /**
+     * Property containing the y mouse position on the canvas.
+     * If the cursor is outside of the canvas, the value is -1.
+     */
     DoubleProperty mouseY = new SimpleDoubleProperty();
+    /**
+     * Property containing id of the selested menu button.
+     * If no button is selected, the value is -1.
+     */
     IntegerProperty selectedButton = new SimpleIntegerProperty(-1);
-    IntegerProperty selectedShape = new SimpleIntegerProperty(-1);
+    /**
+     * Array of flag properties informing whether respective popup window is open.
+     */
     BooleanProperty[] openWindowFlags;
+    /**
+     * The primary stage.
+     */
     Stage primaryStage;
 
-
+    /**
+     * The main method.
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -42,7 +62,10 @@ public class App extends Application {
         primaryStage.show();
     }
     
-
+    /**
+     * Returns the contents of the main scene.
+     * @return  the contents of the main scene
+     */
     private Region createContent() {
         BorderPane root = new BorderPane();
 
@@ -51,7 +74,10 @@ public class App extends Application {
         return root;
     }
 
-
+    /**
+     * Returns the contents of the center section of the main anchor pane.
+     * @return  the contents of the center section of the main anchor pane
+     */
     private Region createCenter() {
         AnchorPane canvas = new Utils.Canvas(mouseX, mouseY, selectedButton);
         canvas.setMaxSize(1920, 1080);
@@ -66,7 +92,10 @@ public class App extends Application {
         return center;
     }
 
-    
+    /**
+     * Returns the contents of the bottom section of the main anchor pane.
+     * @return  the contents of the bottom section of the main anchor pane
+     */
     private Region createBottom() {
         HBox cords = new Utils.Cords(mouseX, mouseY);
 

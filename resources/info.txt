@@ -1,0 +1,8 @@
+"Prosty edytor graficzny"
+
+
+Prosty edytor graficzny umożliwiający tworzenie
+i edycję figur geometrycznych
+
+
+Filip Fabisiak 2025

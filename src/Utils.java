@@ -1,4 +1,6 @@
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -21,18 +24,33 @@ import javafx.util.converter.NumberStringConverter;
 
 public class Utils {
 
+    /**
+     * Returns the distance between two points.
+     * @param x0 first coordinate of the first point
+     * @param y0 second coordinate of the first point
+     * @param x1 first coordinate of the second point
+     * @param y1 second coordinate of the second point
+     * @return the distance between (x0,y0) and (x1,y1)
+     */
     public static Double distance(Double x0, Double y0, Double x1, Double y1) {
         return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
     }
 
-
-    public static class MenuButton extends Button {  
-        MenuButton(String text, int id, IntegerProperty selectedButton, ArrayList<Double> points) {
+    /**
+     * Class 
+     */
+    public static class MenuButton extends Button {
+        /**
+         * Creates a new instance of MenuButton.
+         * @param text
+         * @param id
+         * @param selectedButton
+         */
+        MenuButton(String text, int id, IntegerProperty selectedButton) {
             super(text);
 
             this.setOnAction(event -> {
                 selectedButton.set(id);
-                points.clear();
                 
             });
         }
@@ -47,7 +65,20 @@ public class Utils {
                 @Override
                 public void handle(ActionEvent event) {
                     if (!isOpen.get()) {
-                        Stage infoStage = new ChildStage(text, primaryStage, isOpen);
+                        VBox content = new VBox();
+                        try {
+                            File file = new File("./resources/" + text + ".txt");
+                            Scanner stream = new Scanner(file);
+                            while (stream.hasNextLine()) {
+                                content.getChildren().add(new Label(stream.nextLine()));
+                            }
+
+                            stream.close();
+                        } catch (FileNotFoundException e) {
+                            System.out.println("An error occurred.");
+                            e.printStackTrace();
+                        }
+                        Stage infoStage = new ChildStage(content, primaryStage, isOpen);
                         infoStage.show();
                         isOpen.set(true);
                     }
@@ -58,12 +89,9 @@ public class Utils {
 
 
     public static class ChildStage extends Stage {
-        ChildStage(String text, Stage owner, BooleanProperty isOpen) {
+        ChildStage(VBox content, Stage owner, BooleanProperty isOpen) {
             super();
-
-            Label content = new Label(text);
             content.setAlignment(Pos.CENTER);
-
             this.setScene(new Scene(content, 400, 400));
             this.setResizable(false);
             this.initOwner(owner);
@@ -78,8 +106,9 @@ public class Utils {
         private Shape shapePreview = null;
 
 
-        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, IntegerProperty selectedButton, ArrayList<Double> points) {
+        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, IntegerProperty selectedButton) {
             super();
+            Canvas a = this;
 
             EventHandler<MouseEvent> mousePositionUpdate = new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent event) {
@@ -89,20 +118,33 @@ public class Utils {
                     if (shapePreview != null) {
                         switch (selectedButton.get()) {
                             case 0:
-                                ((Circle) shapePreview).setRadius(distance(((Circle) shapePreview).getCenterX(), ((Circle) shapePreview).getCenterY(), mouseX.get(), mouseY.get()));
+                                if (shapePreview instanceof Circle) { ((Circle) shapePreview).setRadius(distance(((Circle) shapePreview).getCenterX(), ((Circle) shapePreview).getCenterY(), mouseX.get(), mouseY.get())); }
+                                else {
+                                    a.getChildren().removeLast();
+                                    shapePreview = null;
+                                }
                                 break;
 
                             case 1:
-                                ((Rectangle) shapePreview).setX(Math.min(((Rectangle) shapePreview).getX(), event.getX()));
-                                ((Rectangle) shapePreview).setY(Math.min(((Rectangle) shapePreview).getY(), event.getY()));
-                                ((Rectangle) shapePreview).setWidth(event.getX() - ((Rectangle) shapePreview).getX());
-                                ((Rectangle) shapePreview).setHeight(event.getY() - ((Rectangle) shapePreview).getY());
+                                if (shapePreview instanceof PivotingRectangle) {
+                                    ((Rectangle) shapePreview).setX(Math.min(((PivotingRectangle) shapePreview).pivotX, event.getX()));
+                                    ((Rectangle) shapePreview).setY(Math.min(((PivotingRectangle) shapePreview).pivotY, event.getY()));
+                                    ((Rectangle) shapePreview).setWidth(Math.abs(event.getX() - Math.max(((Rectangle) shapePreview).getX(), ((PivotingRectangle) shapePreview).pivotX)));
+                                    ((Rectangle) shapePreview).setHeight(Math.abs(event.getY() - Math.max(((Rectangle) shapePreview).getY(), ((PivotingRectangle) shapePreview).pivotY)));
+                                } else {
+                                    a.getChildren().removeLast();
+                                    shapePreview = null;
+                                }
                                 break;
                             
                             case 2:
-                                ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-2, event.getX());
-                                ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-1, event.getY());
-                        
+                                if (shapePreview instanceof Polygon) {
+                                    ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-2, event.getX());
+                                    ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-1, event.getY());
+                                } else {
+                                    a.getChildren().removeLast();
+                                    shapePreview = null;
+                                }
                             default:
                                 break;
                         }
@@ -132,7 +174,7 @@ public class Utils {
                     
                             case 1:
                                 if (shapePreview == null) {
-                                    shapePreview = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY());
+                                    shapePreview = new PivotingRectangle(event.getX(), event.getY());
                                     this.getChildren().add(shapePreview);
                                 } else {
                                     shapePreview = null;
@@ -144,6 +186,8 @@ public class Utils {
                                     shapePreview = new Polygon(event.getX(), event.getY(), event.getX(), event.getY());
                                     this.getChildren().add(shapePreview);
                                 } else if (distance(event.getX(), event.getY(), ((Polygon) shapePreview).getPoints().get(0), ((Polygon) shapePreview).getPoints().get(1)) <= 10) {
+                                    ((Polygon) shapePreview).getPoints().removeLast();
+                                    ((Polygon) shapePreview).getPoints().removeLast();
                                     shapePreview = null;
                                 } else {
                                     ((Polygon) shapePreview).getPoints().addAll(event.getX(), event.getY());
@@ -191,14 +235,14 @@ public class Utils {
         }
     }
 
+    
+    private static class PivotingRectangle extends Rectangle {
+        Double pivotX, pivotY;
 
-    public static class PolygonStartPoint extends Button{
-        PolygonStartPoint() {
-            super();
-
-            this.setOnAction(event -> {
-
-            });
+        PivotingRectangle(Double x, Double y) {
+            super(x, y, 0.0, 0.0);
+            pivotX = x;
+            pivotY = y;
         }
     }
 
