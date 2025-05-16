@@ -8,11 +8,13 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -40,7 +42,10 @@ public class App extends Application {
      * The primary stage (main window) of the application.
      */
     Stage primaryStage;
-
+    /**
+     * Color picker allowing to choose color.
+     */
+    ColorPicker selectedColor = new ColorPicker(Color.BLACK);
     /**
      * The main entry point for the JavaFX application.
      *
@@ -87,7 +92,7 @@ public class App extends Application {
      * @return a scrollable pane containing the drawing canvas
      */
     private Region createCenter() {
-        AnchorPane canvas = new Utils.Canvas(mouseX, mouseY, selectedButton);
+        AnchorPane canvas = new Utils.Canvas(mouseX, mouseY, selectedButton, selectedColor);
         canvas.setMaxSize(1920, 1080);
         canvas.setMinSize(1920, 1080);
         canvas.setPrefSize(1920, 1080);
@@ -110,13 +115,15 @@ public class App extends Application {
         // Coordinate display
         HBox cords = new Utils.Cords(mouseX, mouseY);
 
-        // Shape selection buttons
+        // Selection buttons
         String[] labels = new String[]{"circle", "rect", "poly" ,"edit"};
         Button[] buttons = new Button[labels.length];
         for (int i=0; i<labels.length; i++) {
             buttons[i] = new Utils.MenuButton(labels[i], i, selectedButton);
         }
-        HBox menu = new HBox(10, buttons);
+        HBox menu = new HBox(10);
+        menu.getChildren().addAll(buttons);
+        menu.getChildren().addAll(selectedColor);
         menu.setAlignment(Pos.CENTER);
 
         // Info and Help buttons

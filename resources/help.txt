@@ -1,4 +1,18 @@
-Instrukcja użytkownika
+INSTRUKCJA UŻYTKOWNIKA
 
+Rysowanie:
+1. Wybierz figurę do rysowania:
+-- "circle" - koło
+-- "rect" - prostokąt
+-- "poly" - wielokąt
+2.
+3. LPM zatwierdza figurę, RPM anuluje
 
-git gud
+Edycja:
+1. "edit" przełącza w tryb edytowania
+2. RPM zmienia kolor wskazanej figury
+Zapisywanie:
+
+Dodatkowe informacje:
+1. "info" - nazwa, opis i autor
+2. "help" - instrukcja użytkownika

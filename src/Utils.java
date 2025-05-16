@@ -8,8 +8,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -20,7 +22,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import javafx.util.converter.NumberStringConverter;
 
 public class Utils {
 
@@ -133,7 +134,7 @@ public class Utils {
          * @param mouseY         a property holding the current mouse Y coordinate
          * @param selectedButton an IntegerProperty representing the selected shape tool
          */
-        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, IntegerProperty selectedButton) {
+        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, IntegerProperty selectedButton, ColorPicker selectedColor) {
             super();
             Canvas a = this;
 
@@ -196,6 +197,7 @@ public class Utils {
                             case 0: //Circle
                                 if (shapePreview == null) {
                                     shapePreview = new Circle(event.getX(), event.getY(), 0);
+                                    shapePreview.setFill(selectedColor.getValue());
                                     this.getChildren().add(shapePreview);
                                 } else {
                                     shapePreview = null;
@@ -205,6 +207,7 @@ public class Utils {
                             case 1: // Rectangle
                                 if (shapePreview == null) {
                                     shapePreview = new PivotingRectangle(event.getX(), event.getY());
+                                    shapePreview.setFill(selectedColor.getValue());
                                     this.getChildren().add(shapePreview);
                                 } else {
                                     shapePreview = null;
@@ -214,6 +217,7 @@ public class Utils {
                             case 2: //Polygon
                                 if (shapePreview == null) {
                                     shapePreview = new Polygon(event.getX(), event.getY(), event.getX(), event.getY());
+                                    shapePreview.setFill(selectedColor.getValue());
                                     this.getChildren().add(shapePreview);
                                 } else if (distance(event.getX(), event.getY(), ((Polygon) shapePreview).getPoints().get(0), ((Polygon) shapePreview).getPoints().get(1)) <= 10) {
                                     ((Polygon) shapePreview).getPoints().removeLast();
@@ -235,6 +239,16 @@ public class Utils {
                                 if (shapePreview != null) {
                                     this.getChildren().removeLast();
                                     shapePreview = null;
+                                }
+                                break;
+
+                            case 3:
+                                for (int i=getChildren().size()-1; i>=0; i--) {
+                                    Node node = getChildren().get(i);
+                                    if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
+                                        shape.setFill(selectedColor.getValue());
+                                        break;
+                                    }
                                 }
                                 break;
                         
@@ -264,8 +278,8 @@ public class Utils {
 
             Label mX = new Label();
             Label mY = new Label();
-            mX.textProperty().bindBidirectional(mouseX, new NumberStringConverter());
-            mY.textProperty().bindBidirectional(mouseY, new NumberStringConverter());
+            mX.textProperty().bind(mouseX.asString("%.0f"));
+            mY.textProperty().bind(mouseY.asString("%.0f"));
 
             this.getChildren().addAll(mX, new Label(" : "), mY);
             this.setAlignment(Pos.CENTER);
