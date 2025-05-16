@@ -37,19 +37,24 @@ public class App extends Application {
      */
     BooleanProperty[] openWindowFlags;
     /**
-     * The primary stage.
+     * The primary stage (main window) of the application.
      */
     Stage primaryStage;
 
     /**
-     * The main method.
-     * @param args
+     * The main entry point for the JavaFX application.
+     *
+     * @param args command-line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
 
-
+    /**
+     * Starts the JavaFX application. Sets the scene and shows the primary stage.
+     *
+     * @param _primaryStage the primary stage provided by the JavaFX runtime
+     */
     @Override
     public void start(Stage _primaryStage) {
         primaryStage = _primaryStage;
@@ -63,8 +68,10 @@ public class App extends Application {
     }
     
     /**
-     * Returns the contents of the main scene.
-     * @return  the contents of the main scene
+     * Creates the main layout content of the application.
+     * It includes the central drawing canvas and the bottom control panel.
+     *
+     * @return the root layout node of the scene
      */
     private Region createContent() {
         BorderPane root = new BorderPane();
@@ -75,8 +82,9 @@ public class App extends Application {
     }
 
     /**
-     * Returns the contents of the center section of the main anchor pane.
-     * @return  the contents of the center section of the main anchor pane
+     * Creates the center section of the UI containing the drawing canvas.
+     *
+     * @return a scrollable pane containing the drawing canvas
      */
     private Region createCenter() {
         AnchorPane canvas = new Utils.Canvas(mouseX, mouseY, selectedButton);
@@ -93,12 +101,16 @@ public class App extends Application {
     }
 
     /**
-     * Returns the contents of the bottom section of the main anchor pane.
-     * @return  the contents of the bottom section of the main anchor pane
+     * Creates the bottom section of the UI containing coordinate display,
+     * shape selection buttons, and informational/help buttons.
+     *
+     * @return a layout node containing bottom controls
      */
     private Region createBottom() {
+        // Coordinate display
         HBox cords = new Utils.Cords(mouseX, mouseY);
 
+        // Shape selection buttons
         String[] labels = new String[]{"circle", "rect", "poly" ,"edit"};
         Button[] buttons = new Button[labels.length];
         for (int i=0; i<labels.length; i++) {
@@ -107,7 +119,7 @@ public class App extends Application {
         HBox menu = new HBox(10, buttons);
         menu.setAlignment(Pos.CENTER);
 
-
+        // Info and Help buttons
         labels = new String[]{"info", "help"};
         openWindowFlags = new BooleanProperty[labels.length];
         buttons = new Button[labels.length];
@@ -119,7 +131,7 @@ public class App extends Application {
         info.setAlignment(Pos.CENTER);
         info.setMinWidth(80);
 
-        
+        // Bottom panel layout
         BorderPane bottom = new BorderPane();
         bottom.setMinHeight(40);
         bottom.setStyle("-fx-background-color: grey; -fx-padding: 0 10 0 10;");
@@ -128,5 +140,4 @@ public class App extends Application {
         bottom.setRight(info);
         return bottom;
     }
-
 }

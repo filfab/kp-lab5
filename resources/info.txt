@@ -1,4 +1,4 @@
-"Prosty edytor graficzny"
+"Prosty Edytor Graficzny"
 
 
 Prosty edytor graficzny umożliwiający tworzenie

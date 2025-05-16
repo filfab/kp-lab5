@@ -1,0 +1,96 @@
+\doxysection{App Class Reference}
+\hypertarget{classApp}{}\label{classApp}\index{App@{App}}
+
+
+Inheritance diagram for App\+:
+% FIG 0
+
+
+Collaboration diagram for App\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classApp_a14f96fec777e7378468d39e351e6a115}{start}} (Stage \+\_\+primary\+Stage)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{classApp_a941972c4be68395f473d23f1cbf101a7}{main}} (String\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+Region \mbox{\hyperlink{classApp_a0b8a0d06608db1bab8f21d666a3de134}{create\+Content}} ()
+\item 
+Region \mbox{\hyperlink{classApp_a21c7b65a125a2ac2741456d45673f5f6}{create\+Center}} ()
+\item 
+Region \mbox{\hyperlink{classApp_a59f581cfa9a10bc1f5566d1dfa75c851}{create\+Bottom}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classApp_a59f581cfa9a10bc1f5566d1dfa75c851}\label{classApp_a59f581cfa9a10bc1f5566d1dfa75c851} 
+\index{App@{App}!createBottom@{createBottom}}
+\index{createBottom@{createBottom}!App@{App}}
+\doxysubsubsection{\texorpdfstring{createBottom()}{createBottom()}}
+{\footnotesize\ttfamily Region App.\+create\+Bottom (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Creates the bottom section of the UI containing coordinate display, shape selection buttons, and informational/help buttons.
+
+\begin{DoxyReturn}{Returns}
+a layout node containing bottom controls 
+\end{DoxyReturn}
+\Hypertarget{classApp_a21c7b65a125a2ac2741456d45673f5f6}\label{classApp_a21c7b65a125a2ac2741456d45673f5f6} 
+\index{App@{App}!createCenter@{createCenter}}
+\index{createCenter@{createCenter}!App@{App}}
+\doxysubsubsection{\texorpdfstring{createCenter()}{createCenter()}}
+{\footnotesize\ttfamily Region App.\+create\+Center (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Creates the center section of the UI containing the drawing canvas.
+
+\begin{DoxyReturn}{Returns}
+a scrollable pane containing the drawing canvas 
+\end{DoxyReturn}
+\Hypertarget{classApp_a0b8a0d06608db1bab8f21d666a3de134}\label{classApp_a0b8a0d06608db1bab8f21d666a3de134} 
+\index{App@{App}!createContent@{createContent}}
+\index{createContent@{createContent}!App@{App}}
+\doxysubsubsection{\texorpdfstring{createContent()}{createContent()}}
+{\footnotesize\ttfamily Region App.\+create\+Content (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Creates the main layout content of the application. It includes the central drawing canvas and the bottom control panel.
+
+\begin{DoxyReturn}{Returns}
+the root layout node of the scene 
+\end{DoxyReturn}
+\Hypertarget{classApp_a941972c4be68395f473d23f1cbf101a7}\label{classApp_a941972c4be68395f473d23f1cbf101a7} 
+\index{App@{App}!main@{main}}
+\index{main@{main}!App@{App}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily static void App.\+main (\begin{DoxyParamCaption}\item[{String\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+The main entry point for the Java\+FX application.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & command-\/line arguments \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classApp_a14f96fec777e7378468d39e351e6a115}\label{classApp_a14f96fec777e7378468d39e351e6a115} 
+\index{App@{App}!start@{start}}
+\index{start@{start}!App@{App}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void App.\+start (\begin{DoxyParamCaption}\item[{Stage}]{\+\_\+primary\+Stage }\end{DoxyParamCaption})}
+
+Starts the Java\+FX application. Sets the scene and shows the primary stage.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+primary\+Stage} & the primary stage provided by the Java\+FX runtime \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{App_8java}{App.\+java}}\end{DoxyCompactItemize}
