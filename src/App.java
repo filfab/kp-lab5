@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Constructor;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -17,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -30,21 +28,7 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    public static class ButtonSelector {
-        private Buttons button;
-
-        ButtonSelector() {
-            button = null;
-        }
-
-        public void set(Buttons arg0) {
-            this.button = arg0;
-        }
-
-        public Buttons get() {
-            return this.button;
-        }
-    }
+    
 
     /**
      * Property containing the x mouse position on the canvas.
@@ -60,7 +44,7 @@ public class App extends Application {
      * Property containing id of the selested menu button.
      * If no button is selected, the value is -1.
      */
-    ButtonSelector selectedButton = new ButtonSelector();
+    Buttons.ButtonSelector selectedButton = new Buttons.ButtonSelector();
     /**
      * Array of flag properties informing whether respective popup window is open.
      */
@@ -185,7 +169,7 @@ public class App extends Application {
          * @param id              the unique ID associated with this button
          * @param selectedButton  a shared property representing the selected button's ID
          */
-        MenuButton(String text, Buttons shape, ButtonSelector selectedButton) {
+        MenuButton(String text, Buttons shape, Buttons.ButtonSelector selectedButton) {
             super(text);
 
             this.setOnAction(event -> {
@@ -202,7 +186,7 @@ public class App extends Application {
         /**
          * Constructs an InfoButton that opens a window with content from a text file.
          *
-         * @param text        the name of the file (without extension) to load
+         * @param text        the name of the file (without extension) to load / button label
          * @param primaryStage the parent stage for modal positioning
          * @param isOpen       property indicating whether the info window is already open
          */
@@ -274,27 +258,23 @@ public class App extends Application {
          * @param mouseY         a property holding the current mouse Y coordinate
          * @param selectedButton an IntegerProperty representing the selected shape tool
          */
-        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, ButtonSelector selectedButton, ColorPicker selectedColor) {
+        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, Buttons.ButtonSelector selectedButton, ColorPicker selectedColor) {
             super();
-            Canvas a = this;
 
-            // Updates the shape preview based on mouse movement
-            EventHandler<MouseEvent> mousePositionUpdate = new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent event) {
-                    mouseX.set(event.getX());
-                    mouseY.set(event.getY());
+            this.setOnMouseMoved(event -> {
+                mouseX.set(event.getX());
+                mouseY.set(event.getY());
                     
                     if (shapePreview != null) {
                         if (selectedButton.get().shape().isInstance(shapePreview)) {
                             ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
                         } else {
-                            a.getChildren().removeLast();
+                            this.getChildren().removeLast();
                             shapePreview = null;
                         }
                     }
-                }
-            };
-            this.setOnMouseMoved(mousePositionUpdate);
+                });
+
             this.setOnMouseDragged(event -> {
                 mouseX.set(event.getX());
                 mouseY.set(event.getY());
@@ -313,7 +293,7 @@ public class App extends Application {
                             if (selectedButton.get().shape().isInstance(shapePreview)) {
                                 ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
                             } else {
-                                a.getChildren().removeLast();
+                                this.getChildren().removeLast();
                                 shapePreview = null;
                             }
                         }
@@ -333,14 +313,13 @@ public class App extends Application {
                             case null -> {}
                     
                             case Buttons.EDIT -> {
-                                for (int i=getChildren().size()-1; i>=0; i--) {
-                                    Node node = getChildren().get(i);
+                                for (Node node : this.getChildren().reversed()) {
                                     if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
                                         selectedShape = shape;
-                                        selectedShape.setStroke(Color.RED);
                                         break;
                                     }
                                 }
+                                selectedShape.setStroke(Color.RED);
                             }
                             
                             
@@ -349,7 +328,7 @@ public class App extends Application {
                                     try {
                                         shapePreview = (Shape) selectedButton.get().shape().getConstructor(double.class, double.class).newInstance(event.getX(), event.getY());
                                         shapePreview.setFill(selectedColor.getValue());
-                                        a.getChildren().add(shapePreview);
+                                        this.getChildren().add(shapePreview);
                                     } catch (Exception e) {
                                         System.out.println(e.getStackTrace());
                                     }

@@ -19,4 +19,20 @@ public enum Buttons {
     public Class<?> shape() {
         return this.cls;
     }
+
+    public static class ButtonSelector {
+        private Buttons button;
+
+        ButtonSelector() {
+            button = null;
+        }
+
+        public void set(Buttons arg0) {
+            this.button = arg0;
+        }
+
+        public Buttons get() {
+            return this.button;
+        }
+    }
 }
