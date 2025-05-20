@@ -1,7 +1,7 @@
-public class Rectangle extends javafx.scene.shape.Rectangle implements Movable, Resizable, Rotatable {
-    double pivotX, pivotY;
+public class Rectangle extends javafx.scene.shape.Rectangle implements Movable, Resizable, Rotatable, Previewable {
+    private double pivotX, pivotY;
 
-    Rectangle(double x, double y) {
+    public Rectangle(double x, double y) {
         super(x, y, 0.0, 0.0);
         pivotX = x;
         pivotY = y;
@@ -24,6 +24,13 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Movable, 
     @Override
     public void rotate(double arg0) {
         this.setRotate(this.getRotate() + arg0 * 0.1);
-        
+    }
+
+    @Override
+    public void preview(double arg0, double arg1) {
+        this.setX(Math.min(this.pivotX, arg0));
+        this.setY(Math.min(this.pivotY, arg1));
+        this.setWidth(Math.abs(arg0 - Math.max(this.getX(), this.pivotX)));
+        this.setHeight(Math.abs(arg1 - Math.max(this.getY(), this.pivotY)));
     }
 }

@@ -1,14 +1,13 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
 import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -30,6 +29,23 @@ import javafx.stage.Stage;
 
 
 public class App extends Application {
+
+    public static class ButtonSelector {
+        private Buttons button;
+
+        ButtonSelector() {
+            button = null;
+        }
+
+        public void set(Buttons arg0) {
+            this.button = arg0;
+        }
+
+        public Buttons get() {
+            return this.button;
+        }
+    }
+
     /**
      * Property containing the x mouse position on the canvas.
      * If the cursor is outside of the canvas, the value is -1.
@@ -44,7 +60,7 @@ public class App extends Application {
      * Property containing id of the selested menu button.
      * If no button is selected, the value is -1.
      */
-    IntegerProperty selectedButton = new SimpleIntegerProperty(-1);
+    ButtonSelector selectedButton = new ButtonSelector();
     /**
      * Array of flag properties informing whether respective popup window is open.
      */
@@ -127,18 +143,16 @@ public class App extends Application {
         HBox cords = new Cords(mouseX, mouseY);
 
         // Selection buttons
-        String[] labels = new String[]{"circle", "rect", "poly" ,"edit"};
-        Button[] buttons = new Button[labels.length];
-        for (int i=0; i<labels.length; i++) {
-            buttons[i] = new MenuButton(labels[i], i, selectedButton);
-        }
         HBox menu = new HBox(10);
-        menu.getChildren().addAll(buttons);
+        Button[] buttons = new Button[Buttons.values().length];
+        for (Buttons type : Buttons.values()) {
+            menu.getChildren().addAll(new MenuButton(type.toString(), type, selectedButton));
+        }
         menu.getChildren().addAll(selectedColor);
         menu.setAlignment(Pos.CENTER);
 
         // Info and Help buttons
-        labels = new String[]{"info", "help"};
+        String[] labels = new String[]{"info", "help"};
         openWindowFlags = new BooleanProperty[labels.length];
         buttons = new Button[labels.length];
         for (int i=0; i<labels.length; i++) {
@@ -171,11 +185,11 @@ public class App extends Application {
          * @param id              the unique ID associated with this button
          * @param selectedButton  a shared property representing the selected button's ID
          */
-        MenuButton(String text, int id, IntegerProperty selectedButton) {
+        MenuButton(String text, Buttons shape, ButtonSelector selectedButton) {
             super(text);
 
             this.setOnAction(event -> {
-                selectedButton.set(id);
+                selectedButton.set(shape);
             });
         }
     }
@@ -222,7 +236,7 @@ public class App extends Application {
     }
 
 
-     /**
+    /**
      * A secondary window (child stage) for displaying informational content.
      */
     public static class ChildStage extends Stage {
@@ -245,8 +259,9 @@ public class App extends Application {
         }
     }
 
+
     /**
-     * A custom canvas pane for drawing and previewing shapes (circle, rectangle, polygon).
+     * A custom canvas pane for drawing and previewing Buttons (circle, rectangle, polygon).
      */
     public static class Canvas extends AnchorPane {
         private Shape shapePreview = null;
@@ -259,7 +274,7 @@ public class App extends Application {
          * @param mouseY         a property holding the current mouse Y coordinate
          * @param selectedButton an IntegerProperty representing the selected shape tool
          */
-        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, IntegerProperty selectedButton, ColorPicker selectedColor) {
+        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, ButtonSelector selectedButton, ColorPicker selectedColor) {
             super();
             Canvas a = this;
 
@@ -268,41 +283,13 @@ public class App extends Application {
                 public void handle(MouseEvent event) {
                     mouseX.set(event.getX());
                     mouseY.set(event.getY());
-
+                    
                     if (shapePreview != null) {
-                        switch (selectedButton.get()) {
-                            case 0: // Circle
-                                if (shapePreview instanceof Circle) { ((Circle) shapePreview).setRadius(Utils.distance(((Circle) shapePreview).getCenterX(), ((Circle) shapePreview).getCenterY(), mouseX.get(), mouseY.get())); }
-                                else {
-                                    a.getChildren().removeLast();
-                                    shapePreview = null;
-                                }
-                                break;
-
-                            case 1: // Rectangle
-                                if (shapePreview instanceof Rectangle) {
-                                    ((Rectangle) shapePreview).setX(Math.min(((Rectangle) shapePreview).pivotX, event.getX()));
-                                    ((Rectangle) shapePreview).setY(Math.min(((Rectangle) shapePreview).pivotY, event.getY()));
-                                    ((Rectangle) shapePreview).setWidth(Math.abs(event.getX() - Math.max(((Rectangle) shapePreview).getX(), ((Rectangle) shapePreview).pivotX)));
-                                    ((Rectangle) shapePreview).setHeight(Math.abs(event.getY() - Math.max(((Rectangle) shapePreview).getY(), ((Rectangle) shapePreview).pivotY)));
-                                } else {
-                                    a.getChildren().removeLast();
-                                    shapePreview = null;
-                                }
-                                break;
-                            
-                            case 2: // Polygon
-                                if (shapePreview instanceof Polygon) {
-                                    ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-2, event.getX());
-                                    ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-1, event.getY());
-                                } else {
-                                    a.getChildren().removeLast();
-                                    shapePreview = null;
-                                }
-                                break;
-
-                            default:
-                                break;
+                        if (selectedButton.get().shape().isInstance(shapePreview)) {
+                            ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
+                        } else {
+                            a.getChildren().removeLast();
+                            shapePreview = null;
                         }
                     }
                 }
@@ -311,49 +298,28 @@ public class App extends Application {
             this.setOnMouseDragged(event -> {
                 mouseX.set(event.getX());
                 mouseY.set(event.getY());
-                    switch (selectedButton.get()) {
-                        case 0: // Circle
-                            if (shapePreview instanceof Circle) { ((Circle) shapePreview).setRadius(Utils.distance(((Circle) shapePreview).getCenterX(), ((Circle) shapePreview).getCenterY(), mouseX.get(), mouseY.get())); }
-                            else {
-                                a.getChildren().removeLast();
-                                shapePreview = null;
-                            }
-                            break;
 
-                        case 1: // Rectangle
-                            if (shapePreview instanceof Rectangle) {
-                                ((Rectangle) shapePreview).setX(Math.min(((Rectangle) shapePreview).pivotX, event.getX()));
-                                ((Rectangle) shapePreview).setY(Math.min(((Rectangle) shapePreview).pivotY, event.getY()));
-                                ((Rectangle) shapePreview).setWidth(Math.abs(event.getX() - Math.max(((Rectangle) shapePreview).getX(), ((Rectangle) shapePreview).pivotX)));
-                                ((Rectangle) shapePreview).setHeight(Math.abs(event.getY() - Math.max(((Rectangle) shapePreview).getY(), ((Rectangle) shapePreview).pivotY)));
-                            } else {
-                                a.getChildren().removeLast();
-                                shapePreview = null;
-                            }
-                            break;
-                        
-                        case 2: // Polygon
-                            if (shapePreview instanceof Polygon) {
-                                ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-2, event.getX());
-                                ((Polygon) shapePreview).getPoints().set(((Polygon) shapePreview).getPoints().size()-1, event.getY());
-                            } else {
-                                a.getChildren().removeLast();
-                                shapePreview = null;
-                            }
-                            break;
+                switch (selectedButton.get()) {
+                    case null -> {}
 
-                        case 3:
-                            if (selectedShape != null && selectedShape instanceof Movable) {
-                                ((Movable) selectedShape).move(event.getX(), event.getY());
-                            }
-                            break;
-
-                        default:
-                            break;
+                    case Buttons.EDIT -> {
+                        if (selectedShape != null && selectedShape instanceof Movable) {
+                            ((Movable) selectedShape).move(event.getX(), event.getY());
+                        }
                     }
-                    
-                 }
-            );
+
+                    default -> {
+                        if (shapePreview != null) {
+                            if (selectedButton.get().shape().isInstance(shapePreview)) {
+                                ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
+                            } else {
+                                a.getChildren().removeLast();
+                                shapePreview = null;
+                            }
+                        }
+                    }
+                }       
+            });
 
             this.setOnMouseExited(event -> {
                 mouseX.set(-1);
@@ -362,43 +328,11 @@ public class App extends Application {
 
             this.setOnMousePressed(event -> {
                 switch (event.getButton()) {
-                    case PRIMARY:
+                    case PRIMARY -> {
                         switch (selectedButton.get()) {
-                            case 0: //Circle
-                                if (shapePreview == null) {
-                                    shapePreview = new Circle(event.getX(), event.getY());
-                                    shapePreview.setFill(selectedColor.getValue());
-                                    this.getChildren().add(shapePreview);
-                                } else {
-                                    shapePreview = null;
-                                }
-                                break;
+                            case null -> {}
                     
-                            case 1: // Rectangle
-                                if (shapePreview == null) {
-                                    shapePreview = new Rectangle(event.getX(), event.getY());
-                                    shapePreview.setFill(selectedColor.getValue());
-                                    this.getChildren().add(shapePreview);
-                                } else {
-                                    shapePreview = null;
-                                }
-                                break;
-                        
-                            case 2: //Polygon
-                                if (shapePreview == null) {
-                                    shapePreview = new Polygon(event.getX(), event.getY());
-                                    shapePreview.setFill(selectedColor.getValue());
-                                    this.getChildren().add(shapePreview);
-                                } else if (Utils.distance(event.getX(), event.getY(), ((Polygon) shapePreview).getPoints().get(0), ((Polygon) shapePreview).getPoints().get(1)) <= 10) {
-                                    ((Polygon) shapePreview).getPoints().removeLast();
-                                    ((Polygon) shapePreview).getPoints().removeLast();
-                                    shapePreview = null;
-                                } else {
-                                    ((Polygon) shapePreview).getPoints().addAll(event.getX(), event.getY());
-                                }
-                                break;
-
-                            default:
+                            case Buttons.EDIT -> {
                                 for (int i=getChildren().size()-1; i>=0; i--) {
                                     Node node = getChildren().get(i);
                                     if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
@@ -407,40 +341,65 @@ public class App extends Application {
                                         break;
                                     }
                                 }
-                                break;
-                        }
-                    break;
-
-                    case SECONDARY:
-                        switch (selectedButton.get()) {
-                            case 0,1,2:
-                                if (shapePreview != null) {
-                                    this.getChildren().removeLast();
-                                    shapePreview = null;
+                            }
+                            
+                            
+                            default -> {
+                                if (shapePreview == null) {
+                                    try {
+                                        shapePreview = (Shape) selectedButton.get().shape().getConstructor(double.class, double.class).newInstance(event.getX(), event.getY());
+                                        shapePreview.setFill(selectedColor.getValue());
+                                        a.getChildren().add(shapePreview);
+                                    } catch (Exception e) {
+                                        System.out.println(e.getStackTrace());
+                                    }
+                                } else {
+                                    if (shapePreview instanceof Polygon) {
+                                        if (((Polygon) shapePreview).isNearStartPoint(event.getX(), event.getY())) {
+                                            ((Polygon) shapePreview).getPoints().removeLast();
+                                            ((Polygon) shapePreview).getPoints().removeLast();
+                                            shapePreview = null;
+                                        } else {
+                                            ((Polygon) shapePreview).getPoints().addAll(event.getX(), event.getY());
+                                        }
+                                    } else {
+                                        shapePreview = null;
+                                    }
                                 }
-                                break;
+                            }
+                        }
+                    }
 
-                            case 3:
+                    case SECONDARY -> {
+                        switch (selectedButton.get()) {
+                            case null -> {}
+                    
+                            case Buttons.EDIT -> {
                                 for (int i=getChildren().size()-1; i>=0; i--) {
                                     Node node = getChildren().get(i);
                                     if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
                                         shape.setFill(selectedColor.getValue());
-                                        break;
                                     }
                                 }
-                                break;
-                        
-                            default:
-                                break;
+                            }
+                            
+                            default -> {
+                                if (shapePreview != null) {
+                                    this.getChildren().removeLast();
+                                    shapePreview = null;
+                                }
+                            }
                         }
+                    }
                 
-                    default: break;
+                    default -> {}
+                    
                 }
                 
             });
 
             this.setOnScroll(event -> {
-                if (selectedButton.get() == 3) {
+                if (selectedButton.get() == Buttons.EDIT) {
                     if (selectedShape != null && selectedShape instanceof Resizable) {
                         ((Resizable) selectedShape).resize(event.getDeltaY());
                     }
@@ -448,6 +407,7 @@ public class App extends Application {
             });
         }
     }
+
 
     /**
      * A status bar showing the current mouse coordinates in the format "X : Y".
@@ -472,4 +432,5 @@ public class App extends Application {
             this.setMinWidth(80);
         }
     }
+
 }

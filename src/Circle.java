@@ -1,5 +1,5 @@
-public class Circle extends javafx.scene.shape.Circle implements Movable, Resizable {
-    Circle(double x, double y) {
+public class Circle extends javafx.scene.shape.Circle implements Movable, Resizable, Previewable {
+    public Circle(double x, double y) {
         super(x, y, 0);
     }
 
@@ -13,4 +13,10 @@ public class Circle extends javafx.scene.shape.Circle implements Movable, Resiza
         this.setCenterX(arg0);
         this.setCenterY(arg1);
     }
+
+    @Override
+    public void preview(double arg0, double arg1) {
+        this.setRadius(Utils.distance(this.getCenterX(), this.getCenterY(), arg0, arg1));
+    }
+
 }
