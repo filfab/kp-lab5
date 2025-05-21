@@ -248,8 +248,12 @@ public class App extends Application {
      * A custom canvas pane for drawing and previewing Buttons (circle, rectangle, polygon).
      */
     public static class Canvas extends AnchorPane {
+        private javafx.scene.shape.Circle rotateCircle = null;
         private Shape shapePreview = null;
         private Shape selectedShape = null;
+        private DoubleProperty pivotX = new SimpleDoubleProperty();
+        private DoubleProperty pivotY = new SimpleDoubleProperty();
+        private boolean isRotating = false;
 
         /**
          * Constructs a new Canvas that tracks mouse events and allows shape drawing.
@@ -260,6 +264,22 @@ public class App extends Application {
          */
         Canvas(DoubleProperty mouseX, DoubleProperty mouseY, Buttons.ButtonSelector selectedButton, ColorPicker selectedColor) {
             super();
+            rotateCircle = new javafx.scene.shape.Circle();
+            rotateCircle.setRadius(10);
+            rotateCircle.setFill(Color.BLUE);
+            rotateCircle.setStroke(Color.BLUE);
+            rotateCircle.centerXProperty().bind(pivotX);
+            rotateCircle.centerYProperty().bind(pivotY);
+            rotateCircle.setOnMouseDragged(event -> {
+                isRotating = true;
+                if (selectedShape instanceof Rotatable) {
+                    ((Rotatable) selectedShape).rotate(event.getX(), event.getY());
+                }
+             });
+             rotateCircle.setOnMouseReleased(event -> {
+                if (isRotating) { isRotating = false; }
+             });
+            this.getChildren().add(rotateCircle);
 
             this.setOnMouseMoved(event -> {
                 mouseX.set(event.getX());
@@ -269,7 +289,7 @@ public class App extends Application {
                         if (selectedButton.get().shape().isInstance(shapePreview)) {
                             ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
                         } else {
-                            this.getChildren().removeLast();
+                            this.getChildren().remove(this.getChildren().size()-2);
                             shapePreview = null;
                         }
                     }
@@ -278,6 +298,8 @@ public class App extends Application {
             this.setOnMouseDragged(event -> {
                 mouseX.set(event.getX());
                 mouseY.set(event.getY());
+
+                if (isRotating) { return; }
 
                 switch (selectedButton.get()) {
                     case null -> {}
@@ -293,7 +315,7 @@ public class App extends Application {
                             if (selectedButton.get().shape().isInstance(shapePreview)) {
                                 ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
                             } else {
-                                this.getChildren().removeLast();
+                                this.getChildren().remove(this.getChildren().size()-2);
                                 shapePreview = null;
                             }
                         }
@@ -313,30 +335,29 @@ public class App extends Application {
                             case null -> {}
                     
                             case Buttons.EDIT -> {
-                                for (Node node : this.getChildren().reversed()) {
+                                for (int i=getChildren().size()-2; i>=0; i--) {
+                                    Node node = getChildren().get(i);
                                     if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
+                                        if (selectedShape!=null) { selectedShape.setStroke(null); }
                                         selectedShape = shape;
+                                        if (selectedShape instanceof Rotatable) {
+                                            rotateCircle.centerXProperty().bind(((Rotatable) selectedShape).centerXProperty());
+                                            rotateCircle.centerYProperty().bind(((Rotatable) selectedShape).centerYProperty());
+                                        }
+                                        selectedShape.setStroke(Color.RED);
                                         break;
                                     }
                                 }
-                                selectedShape.setStroke(Color.RED);
                             }
-                            
                             
                             default -> {
                                 if (shapePreview == null) {
-                                    try {
-                                        shapePreview = (Shape) selectedButton.get().shape().getConstructor(double.class, double.class).newInstance(event.getX(), event.getY());
-                                        shapePreview.setFill(selectedColor.getValue());
-                                        this.getChildren().add(shapePreview);
-                                    } catch (Exception e) {
-                                        System.out.println(e.getStackTrace());
-                                    }
+                                    shapePreview = Utils.createShape(selectedButton.get().shape(), event.getX(), event.getY(), selectedColor.getValue());
+                                    this.getChildren().add(this.getChildren().size()-1, shapePreview);
                                 } else {
                                     if (shapePreview instanceof Polygon) {
                                         if (((Polygon) shapePreview).isNearStartPoint(event.getX(), event.getY())) {
-                                            ((Polygon) shapePreview).getPoints().removeLast();
-                                            ((Polygon) shapePreview).getPoints().removeLast();
+                                            ((Polygon) shapePreview).finish();
                                             shapePreview = null;
                                         } else {
                                             ((Polygon) shapePreview).getPoints().addAll(event.getX(), event.getY());
@@ -354,10 +375,11 @@ public class App extends Application {
                             case null -> {}
                     
                             case Buttons.EDIT -> {
-                                for (int i=getChildren().size()-1; i>=0; i--) {
+                                for (int i=getChildren().size()-2; i>=0; i--) {
                                     Node node = getChildren().get(i);
                                     if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
                                         shape.setFill(selectedColor.getValue());
+                                        break;
                                     }
                                 }
                             }

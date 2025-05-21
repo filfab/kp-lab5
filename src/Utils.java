@@ -1,4 +1,12 @@
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
+
+/**
+ * Static class containing utility functions
+ */
 public class Utils {
+    private Utils() {}
+
     /**
      * Calculates the Euclidean distance between two points.
      *
@@ -10,6 +18,17 @@ public class Utils {
      */
     public static double distance(double x0, double y0, double x1, double y1) {
         return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
+    }
+
+    public static Shape createShape(Class<?> clazz, double x, double y, Color color) {
+        try {
+            Shape shape = (Shape) clazz.getConstructor(double.class, double.class).newInstance(x, y);
+            shape.setFill(color);
+            return shape;
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
+        return null;
     }
 
 }
