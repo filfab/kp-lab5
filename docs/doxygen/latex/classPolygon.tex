@@ -1,0 +1,226 @@
+\doxysection{Polygon Class Reference}
+\hypertarget{classPolygon}{}\label{classPolygon}\index{Polygon@{Polygon}}
+
+
+Inheritance diagram for Polygon\+:
+% FIG 0
+
+
+Collaboration diagram for Polygon\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classPolygon_a7bc45ae27e82a536dd996697f189b05d}{Polygon}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classPolygon_ac9bd8b5755eac0d357f964ccb886cdb5}{move}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classPolygon_a6defa3baa54e7c3d16057d0948663718}{resize}} (double amount)
+\item 
+void \mbox{\hyperlink{classPolygon_a6fc02ca82fda2dbf9e3468957a8455cb}{rotate}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classPolygon_a6f1afd36c028336a79a8da54adf75406}{preview}} (double x, double y)
+\item 
+\mbox{\hyperlink{classPolygon}{Polygon}} \mbox{\hyperlink{classPolygon_adb2933905a0c6e9181b28e3b38f0d4e4}{next\+Point}} (double x, double y)
+\item 
+Double\+Property \mbox{\hyperlink{classPolygon_ac8930ed2a6254b24daa55008d55f497b}{rotation\+Pivot\+XProperty}} ()
+\item 
+Double\+Property \mbox{\hyperlink{classPolygon_aee66d7656637874ca91517a08b8fecc4}{rotation\+Pivot\+YProperty}} ()
+\item 
+Utils.\+Shape\+Repr \mbox{\hyperlink{classPolygon_a7b7556b1948aecd9dccd729c50433fc5}{create\+Repr}} ()
+\item 
+void \mbox{\hyperlink{classPolygon_a4727a2da2a473620cd302472788d2827}{recreate}} (Double\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A custom {\ttfamily \doxylink{}{javafx.\+scene.\+shape.\+Polygon}} that supports dynamic transformations such as moving, resizing, rotating, and previewing. This class is designed for interactive graphical applications where user-\/defined manipulations of shapes are needed.
+
+This class implements the following interfaces\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily Movable} -\/ for repositioning the rectangle based on a center point. 
+\item {\ttfamily Resizable} -\/ for proportionally resizing the rectangle. 
+\item {\ttfamily Rotatable} -\/ for applying rotation to the rectangle. 
+\item {\ttfamily Previewable} -\/ for dynamically adjusting rectangle bounds based on user input. 
+\end{DoxyItemize}
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classPolygon_a7bc45ae27e82a536dd996697f189b05d}\label{classPolygon_a7bc45ae27e82a536dd996697f189b05d} 
+\index{Polygon@{Polygon}!Polygon@{Polygon}}
+\index{Polygon@{Polygon}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{Polygon()}{Polygon()}}
+{\footnotesize\ttfamily Polygon.\+Polygon (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a new {\ttfamily Polygon} with doubled points at specified coordinates. First point acts as the starting point, the second one is used for preview functionality.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the polygon origin \\
+\hline
+{\em y} & the Y coordinate of the polygon origin \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classPolygon_a7b7556b1948aecd9dccd729c50433fc5}\label{classPolygon_a7b7556b1948aecd9dccd729c50433fc5} 
+\index{Polygon@{Polygon}!createRepr@{createRepr}}
+\index{createRepr@{createRepr}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{createRepr()}{createRepr()}}
+{\footnotesize\ttfamily Utils.\+Shape\+Repr Polygon.\+create\+Repr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a serialization-\/ready representation of the polygon.
+
+\begin{DoxyReturn}{Returns}
+Serialization-\/ready representation of the polygon 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266}{Repr}}.
+
+\Hypertarget{classPolygon_ac9bd8b5755eac0d357f964ccb886cdb5}\label{classPolygon_ac9bd8b5755eac0d357f964ccb886cdb5} 
+\index{Polygon@{Polygon}!move@{move}}
+\index{move@{move}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{move()}{move()}}
+{\footnotesize\ttfamily void Polygon.\+move (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Moves the polygon such that it\textquotesingle{}s centroid is at point (x,y).
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the new X coordinate for the rectangle\textquotesingle{}s center \\
+\hline
+{\em y} & the new Y coordinate for the rectangle\textquotesingle{}s center \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceMovable_aeb8ba9ca896d6d91f876a33c63240abb}{Movable}}.
+
+\Hypertarget{classPolygon_adb2933905a0c6e9181b28e3b38f0d4e4}\label{classPolygon_adb2933905a0c6e9181b28e3b38f0d4e4} 
+\index{Polygon@{Polygon}!nextPoint@{nextPoint}}
+\index{nextPoint@{nextPoint}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{nextPoint()}{nextPoint()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classPolygon}{Polygon}} Polygon.\+next\+Point (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Determines whether given point is within threshold distance of the polygon\textquotesingle{}s origin.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the point to test \\
+\hline
+{\em y} & the Y coordinate of the point to test \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the point is near the starting point (within 10 units), {\ttfamily false} otherwise 
+\end{DoxyReturn}
+\Hypertarget{classPolygon_a6f1afd36c028336a79a8da54adf75406}\label{classPolygon_a6f1afd36c028336a79a8da54adf75406} 
+\index{Polygon@{Polygon}!preview@{preview}}
+\index{preview@{preview}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{preview()}{preview()}}
+{\footnotesize\ttfamily void Polygon.\+preview (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Updates the polygons\textquotesingle{}s last point to preview a bounding box comprised of previously set points and previewed coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the previewed point \\
+\hline
+{\em y} & the Y coordinate of the previewed point \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff}{Previewable}}.
+
+\Hypertarget{classPolygon_a4727a2da2a473620cd302472788d2827}\label{classPolygon_a4727a2da2a473620cd302472788d2827} 
+\index{Polygon@{Polygon}!recreate@{recreate}}
+\index{recreate@{recreate}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{recreate()}{recreate()}}
+{\footnotesize\ttfamily void Polygon.\+recreate (\begin{DoxyParamCaption}\item[{Double\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\doxylink{classPolygon}{Polygon} scpecific recreation step.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & array of shape specific parameters \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_aca73ccec1a313681cb59059cef12121f}{Repr}}.
+
+\Hypertarget{classPolygon_a6defa3baa54e7c3d16057d0948663718}\label{classPolygon_a6defa3baa54e7c3d16057d0948663718} 
+\index{Polygon@{Polygon}!resize@{resize}}
+\index{resize@{resize}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily void Polygon.\+resize (\begin{DoxyParamCaption}\item[{double}]{amount }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Resizes the polygon by scaling it by given factor.
+
+
+\begin{DoxyParams}{Parameters}
+{\em amount} & the scaling factor; positive to increase size, negative to decrease \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceResizable_a79886d3e3ffdbaba0533a2fb8b5090b7}{Resizable}}.
+
+\Hypertarget{classPolygon_a6fc02ca82fda2dbf9e3468957a8455cb}\label{classPolygon_a6fc02ca82fda2dbf9e3468957a8455cb} 
+\index{Polygon@{Polygon}!rotate@{rotate}}
+\index{rotate@{rotate}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{rotate()}{rotate()}}
+{\footnotesize\ttfamily void Polygon.\+rotate (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Rotates the polygon by calculating an angle based given point (x,y).
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the x coordinate \\
+\hline
+{\em y} & the y coordinate \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_a1624252784acf781f3e59317e1cf228a}{Rotatable}}.
+
+\Hypertarget{classPolygon_ac8930ed2a6254b24daa55008d55f497b}\label{classPolygon_ac8930ed2a6254b24daa55008d55f497b} 
+\index{Polygon@{Polygon}!rotationPivotXProperty@{rotationPivotXProperty}}
+\index{rotationPivotXProperty@{rotationPivotXProperty}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{rotationPivotXProperty()}{rotationPivotXProperty()}}
+{\footnotesize\ttfamily Double\+Property Polygon.\+rotation\+Pivot\+XProperty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the property holding polygon\textquotesingle{}s rotation pivot X coordinate.
+
+\begin{DoxyReturn}{Returns}
+polygon\textquotesingle{}s rotation\+PivotX property 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_a58a551238af732f3ec3ed48c5f363a3e}{Rotatable}}.
+
+\Hypertarget{classPolygon_aee66d7656637874ca91517a08b8fecc4}\label{classPolygon_aee66d7656637874ca91517a08b8fecc4} 
+\index{Polygon@{Polygon}!rotationPivotYProperty@{rotationPivotYProperty}}
+\index{rotationPivotYProperty@{rotationPivotYProperty}!Polygon@{Polygon}}
+\doxysubsubsection{\texorpdfstring{rotationPivotYProperty()}{rotationPivotYProperty()}}
+{\footnotesize\ttfamily Double\+Property Polygon.\+rotation\+Pivot\+YProperty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the property holding polygon\textquotesingle{}s rotation pivot Y coordinate.
+
+\begin{DoxyReturn}{Returns}
+polygon\textquotesingle{}s rotation\+PivotY property 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_ae14d4b1fc8354b051a8174427c900878}{Rotatable}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Polygon.\+java\end{DoxyCompactItemize}

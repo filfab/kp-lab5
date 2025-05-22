@@ -1,0 +1,56 @@
+\doxysection{Repr Interface Reference}
+\hypertarget{interfaceRepr}{}\label{interfaceRepr}\index{Repr@{Repr}}
+
+
+Inheritance diagram for Repr\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+Utils.\+Shape\+Repr \mbox{\hyperlink{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266}{create\+Repr}} ()
+\item 
+void \mbox{\hyperlink{interfaceRepr_aca73ccec1a313681cb59059cef12121f}{recreate}} (Double\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+An interface for 2D shape objects that defines a serializable representation. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266}\label{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266} 
+\index{Repr@{Repr}!createRepr@{createRepr}}
+\index{createRepr@{createRepr}!Repr@{Repr}}
+\doxysubsubsection{\texorpdfstring{createRepr()}{createRepr()}}
+{\footnotesize\ttfamily Utils.\+Shape\+Repr Repr.\+create\+Repr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Constructs a serializable representation of the object.
+
+\begin{DoxyReturn}{Returns}
+Serialization-\/ready representation of the object 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classCircle_acdd31e838e3219de8fb8712e370358ee}{Circle}}, \mbox{\hyperlink{classPolygon_a7b7556b1948aecd9dccd729c50433fc5}{Polygon}}, and \mbox{\hyperlink{classRectangle_af6ea2d8efd77dddaa33f619530889ddd}{Rectangle}}.
+
+\Hypertarget{interfaceRepr_aca73ccec1a313681cb59059cef12121f}\label{interfaceRepr_aca73ccec1a313681cb59059cef12121f} 
+\index{Repr@{Repr}!recreate@{recreate}}
+\index{recreate@{recreate}!Repr@{Repr}}
+\doxysubsubsection{\texorpdfstring{recreate()}{recreate()}}
+{\footnotesize\ttfamily void Repr.\+recreate (\begin{DoxyParamCaption}\item[{Double\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})}
+
+Object scpecific recreation step.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & array of object specific parameters \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classCircle_ae79e1c80a780566d4cccf7e910bd9e4b}{Circle}}, \mbox{\hyperlink{classPolygon_a4727a2da2a473620cd302472788d2827}{Polygon}}, and \mbox{\hyperlink{classRectangle_a1dff0d279086eaf0673d669867e3a729}{Rectangle}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Repr.\+java\end{DoxyCompactItemize}

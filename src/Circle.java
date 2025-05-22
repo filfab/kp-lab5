@@ -1,3 +1,5 @@
+import javafx.scene.paint.Color;
+
 /**
  * A custom {@link javafx.scene.shape.Circle} that supports dynamic transformations
  * such as moving, resizing, and previewing. This class is designed for
@@ -11,8 +13,7 @@
  *   <li>{@code Previewable} - for dynamically adjusting rectangle bounds based on user input.</li>
  * </ul>
  */
-public class Circle extends javafx.scene.shape.Circle implements Movable, Resizable, Previewable {
-
+public class Circle extends javafx.scene.shape.Circle implements Movable, Resizable, Previewable, Repr {
     /**
      * Constructs a new {@code Circle} with center at specified coordinates.
      * The initial radius is set to 0.
@@ -21,7 +22,9 @@ public class Circle extends javafx.scene.shape.Circle implements Movable, Resiza
      * @param y the Y coordinate of the circle origin
      */
     public Circle(double x, double y) {
-        super(x, y, 0);
+        super(0, 0, 0);
+        setTranslateX(x);
+        setTranslateY(y);
     }
 
     /**
@@ -32,8 +35,8 @@ public class Circle extends javafx.scene.shape.Circle implements Movable, Resiza
      */
     @Override
     public void move(double x, double y) {
-        this.setCenterX(x);
-        this.setCenterY(y);
+        setTranslateX(x);
+        setTranslateY(y);
     }
 
     /**
@@ -42,8 +45,8 @@ public class Circle extends javafx.scene.shape.Circle implements Movable, Resiza
      * @param amount the scaling factor; positive to increase size, negative to decrease
      */
     @Override
-    public void resize(double ammount) {
-        this.setRadius(this.getRadius() + ammount * 0.1);
+    public void resize(double amount) {
+        setRadius(getRadius() + amount * 0.1);
     }
 
     /**
@@ -55,7 +58,39 @@ public class Circle extends javafx.scene.shape.Circle implements Movable, Resiza
      */
     @Override
     public void preview(double x, double y) {
-        this.setRadius(Utils.distance(this.getCenterX(), this.getCenterY(), x, y));
+        setRadius(Utils.distance(getTranslateX(), getTranslateY(), x, y));
+    }
+
+    /**
+     * Constructs a serialization-ready representation of the circle.
+     * 
+     * @return Serialization-ready representation of the circle
+     */
+    @Override
+    public Utils.ShapeRepr createRepr() {
+        Utils.ShapeRepr repr = new Utils.ShapeRepr();
+        repr.shapeType = Circle.class;
+        repr.color = String.format( "#%02X%02X%02X",
+        (int)( ((Color) getFill()).getRed() * 255 ),
+        (int)( ((Color) getFill()).getGreen() * 255 ),
+        (int)( ((Color) getFill()).getBlue() * 255 ) );
+        repr.x = getTranslateX();
+        repr.y = getTranslateY();
+        repr.angle = 0;
+        repr.scale = 1.0;
+        repr.args = new Double[]{getRadius()};
+
+        return repr;
+    }
+
+    /**
+     * Circle scpecific recreation step.
+     * 
+     * @param args array of shape specific parameters
+     */
+    @Override
+    public void recreate(Double[] args) {
+        setRadius(args[0]);
     }
 
 }

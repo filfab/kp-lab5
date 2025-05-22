@@ -1,0 +1,151 @@
+\doxysection{Circle Class Reference}
+\hypertarget{classCircle}{}\label{classCircle}\index{Circle@{Circle}}
+
+
+Inheritance diagram for Circle\+:
+% FIG 0
+
+
+Collaboration diagram for Circle\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classCircle_a3618ee571758ead2ef8c452691cc00dc}{Circle}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classCircle_a969c86d20503d09441a31f31fb0c8665}{move}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classCircle_a7e3755583606bb3644999a8c2a4de9c6}{resize}} (double amount)
+\item 
+void \mbox{\hyperlink{classCircle_a5f8223875c2e45b0284f6f7f1ec6e02c}{preview}} (double x, double y)
+\item 
+Utils.\+Shape\+Repr \mbox{\hyperlink{classCircle_acdd31e838e3219de8fb8712e370358ee}{create\+Repr}} ()
+\item 
+void \mbox{\hyperlink{classCircle_ae79e1c80a780566d4cccf7e910bd9e4b}{recreate}} (Double\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A custom {\ttfamily \doxylink{}{javafx.\+scene.\+shape.\+Circle}} that supports dynamic transformations such as moving, resizing, and previewing. This class is designed for interactive graphical applications where user-\/defined manipulations of shapes are needed.
+
+This class implements the following interfaces\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily Movable} -\/ for repositioning the rectangle based on a center point. 
+\item {\ttfamily Resizable} -\/ for proportionally resizing the rectangle. 
+\item {\ttfamily Rotatable} -\/ for applying rotation to the rectangle. 
+\item {\ttfamily Previewable} -\/ for dynamically adjusting rectangle bounds based on user input. 
+\end{DoxyItemize}
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classCircle_a3618ee571758ead2ef8c452691cc00dc}\label{classCircle_a3618ee571758ead2ef8c452691cc00dc} 
+\index{Circle@{Circle}!Circle@{Circle}}
+\index{Circle@{Circle}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{Circle()}{Circle()}}
+{\footnotesize\ttfamily Circle.\+Circle (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a new {\ttfamily Circle} with center at specified coordinates. The initial radius is set to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the circle origin \\
+\hline
+{\em y} & the Y coordinate of the circle origin \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classCircle_acdd31e838e3219de8fb8712e370358ee}\label{classCircle_acdd31e838e3219de8fb8712e370358ee} 
+\index{Circle@{Circle}!createRepr@{createRepr}}
+\index{createRepr@{createRepr}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{createRepr()}{createRepr()}}
+{\footnotesize\ttfamily Utils.\+Shape\+Repr Circle.\+create\+Repr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a serialization-\/ready representation of the circle.
+
+\begin{DoxyReturn}{Returns}
+Serialization-\/ready representation of the circle 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266}{Repr}}.
+
+\Hypertarget{classCircle_a969c86d20503d09441a31f31fb0c8665}\label{classCircle_a969c86d20503d09441a31f31fb0c8665} 
+\index{Circle@{Circle}!move@{move}}
+\index{move@{move}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{move()}{move()}}
+{\footnotesize\ttfamily void Circle.\+move (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Moves the circle\textquotesingle{}s center.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the new X coordinate for the circle\textquotesingle{}s center \\
+\hline
+{\em y} & the new Y coordinate for the circle\textquotesingle{}s center \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceMovable_aeb8ba9ca896d6d91f876a33c63240abb}{Movable}}.
+
+\Hypertarget{classCircle_a5f8223875c2e45b0284f6f7f1ec6e02c}\label{classCircle_a5f8223875c2e45b0284f6f7f1ec6e02c} 
+\index{Circle@{Circle}!preview@{preview}}
+\index{preview@{preview}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{preview()}{preview()}}
+{\footnotesize\ttfamily void Circle.\+preview (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Updates the circle\textquotesingle{}s radius to preview a bounding box from the origin to the given coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of circle\textquotesingle{}s edge \\
+\hline
+{\em y} & the Y coordinate of circle\textquotesingle{}s edge \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff}{Previewable}}.
+
+\Hypertarget{classCircle_ae79e1c80a780566d4cccf7e910bd9e4b}\label{classCircle_ae79e1c80a780566d4cccf7e910bd9e4b} 
+\index{Circle@{Circle}!recreate@{recreate}}
+\index{recreate@{recreate}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{recreate()}{recreate()}}
+{\footnotesize\ttfamily void Circle.\+recreate (\begin{DoxyParamCaption}\item[{Double\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\doxylink{classCircle}{Circle} scpecific recreation step.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & array of shape specific parameters \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_aca73ccec1a313681cb59059cef12121f}{Repr}}.
+
+\Hypertarget{classCircle_a7e3755583606bb3644999a8c2a4de9c6}\label{classCircle_a7e3755583606bb3644999a8c2a4de9c6} 
+\index{Circle@{Circle}!resize@{resize}}
+\index{resize@{resize}!Circle@{Circle}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily void Circle.\+resize (\begin{DoxyParamCaption}\item[{double}]{amount }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Resizes the circle by scaling the radius proportionally.
+
+
+\begin{DoxyParams}{Parameters}
+{\em amount} & the scaling factor; positive to increase size, negative to decrease \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceResizable_a79886d3e3ffdbaba0533a2fb8b5090b7}{Resizable}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Circle.\+java\end{DoxyCompactItemize}

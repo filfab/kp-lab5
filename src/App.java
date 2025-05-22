@@ -1,5 +1,9 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -8,7 +12,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,19 +22,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-
+/**
+ * Javafx application
+ */
 public class App extends Application {
-
-    
 
     /**
      * Property containing the x mouse position on the canvas.
@@ -41,22 +50,30 @@ public class App extends Application {
      */
     DoubleProperty mouseY = new SimpleDoubleProperty();
     /**
-     * Property containing id of the selested menu button.
-     * If no button is selected, the value is -1.
-     */
-    Buttons.ButtonSelector selectedButton = new Buttons.ButtonSelector();
-    /**
-     * Array of flag properties informing whether respective popup window is open.
-     */
-    BooleanProperty[] openWindowFlags;
-    /**
      * The primary stage (main window) of the application.
      */
     Stage primaryStage;
     /**
+     * The canvas (drawing board) of the application.
+     */
+    Canvas canvas;
+    /**
+     * Flag containing information about currenty celected button.
+     */
+    Buttons.ButtonSelector selectedButton = new Buttons.ButtonSelector();
+    /**
+     * Pointer flag informing whether info popup window is open.
+     */
+    BooleanProperty infoWindowFlag = new SimpleBooleanProperty(false);
+    /**
+     * Pointer flag informing whether help popup window is open.
+     */
+    BooleanProperty helpWindowFlag = new SimpleBooleanProperty(false);
+    /**
      * Color picker allowing to choose color.
      */
     ColorPicker selectedColor = new ColorPicker(Color.BLACK);
+
     /**
      * The main entry point for the JavaFX application.
      *
@@ -103,22 +120,20 @@ public class App extends Application {
      * @return a scrollable pane containing the drawing canvas
      */
     private Region createCenter() {
-        AnchorPane canvas = new Canvas(mouseX, mouseY, selectedButton, selectedColor);
-        canvas.setMaxSize(1920, 1080);
-        canvas.setMinSize(1920, 1080);
-        canvas.setPrefSize(1920, 1080);
-        canvas.setStyle("-fx-background-color: white");
+        canvas = new Canvas(mouseX, mouseY, selectedButton, selectedColor);
 
-        ScrollPane center = new ScrollPane(canvas);
+        StackPane wrapper = new StackPane(canvas);
+        wrapper.setAlignment(Pos.CENTER);
+
+        ScrollPane center = new ScrollPane(wrapper);
         center.setFitToHeight(true);
         center.setFitToWidth(true);
-        center.setStyle("-fx-padding: 10px 0 0 10px;");
         return center;
     }
 
     /**
      * Creates the bottom section of the UI containing coordinate display,
-     * shape selection buttons, and informational/help buttons.
+     * mode selection buttons, save/load buttons, and information/help buttons.
      *
      * @return a layout node containing bottom controls
      */
@@ -128,22 +143,35 @@ public class App extends Application {
 
         // Selection buttons
         HBox menu = new HBox(10);
-        Button[] buttons = new Button[Buttons.values().length];
         for (Buttons type : Buttons.values()) {
-            menu.getChildren().addAll(new MenuButton(type.toString(), type, selectedButton));
+            menu.getChildren().add(new MenuButton(type.toString(), type, selectedButton));
         }
-        menu.getChildren().addAll(selectedColor);
+        FileChooser fileChooser = new FileChooser();
+        Button save = new Button("save");
+        save.setOnAction(event -> {
+            File file = fileChooser.showSaveDialog(primaryStage);
+
+            if (file != null) {
+                Event.fireEvent(canvas, new FileEvent(FileEvent.SAVE, file));
+            }
+        });
+        Button load = new Button("load");
+        load.setOnAction(event -> {
+            File file = fileChooser.showOpenDialog(primaryStage);
+
+            if (file != null) {
+                Event.fireEvent(canvas, new FileEvent(FileEvent.LOAD, file));
+            }
+        });
+        menu.getChildren().addAll(selectedColor, save, load);
         menu.setAlignment(Pos.CENTER);
 
         // Info and Help buttons
-        String[] labels = new String[]{"info", "help"};
-        openWindowFlags = new BooleanProperty[labels.length];
-        buttons = new Button[labels.length];
-        for (int i=0; i<labels.length; i++) {
-            openWindowFlags[i] = new SimpleBooleanProperty(false);
-            buttons[i] = new InfoButton(labels[i], primaryStage, openWindowFlags[i]);
-        }
-        HBox info = new HBox(10, buttons);
+        HBox info = new HBox(10);
+        info.getChildren().addAll(
+            new InfoButton("info", primaryStage, infoWindowFlag),
+            new InfoButton("help", primaryStage, helpWindowFlag)
+        );
         info.setAlignment(Pos.CENTER);
         info.setMinWidth(80);
 
@@ -157,59 +185,228 @@ public class App extends Application {
         return bottom;
     }
 
+    /**
+     * A custom canvas pane for drawing and previewing Buttons (circle, rectangle, polygon).
+     */
+    public static class Canvas extends AnchorPane {
+        private Shape shapePreview = null;
+        private final Utils.Pointer<Shape> selectedShape = new Utils.Pointer<Shape>(null);
+        private final RotationCircle rotationCircle = new RotationCircle(selectedShape);
+
+        /**
+         * Constructs a new Canvas that tracks mouse events and allows shape drawing.
+         *
+         * @param mouseX         a property holding the current mouse X coordinate
+         * @param mouseY         a property holding the current mouse Y coordinate
+         * @param selectedButton an IntegerProperty representing the selected shape tool
+         */
+        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, Buttons.ButtonSelector selectedButton, ColorPicker selectedColor) {
+            super();
+            setMaxSize(1600, 900);
+            setMinSize(1600, 900);
+            setPrefSize(1600, 900);
+            setStyle("-fx-background-color: white");
+
+            getChildren().add(rotationCircle);
+
+            this.setOnMouseMoved(event -> {
+                mouseX.set(event.getX());
+                mouseY.set(event.getY());
+                    
+                if (shapePreview != null) {
+                    if (selectedButton.get().shape().isInstance(shapePreview)) {
+                        ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
+                    } else {
+                        this.getChildren().remove(this.getChildren().size()-2);
+                        shapePreview = null;
+                    }
+                }
+                if (!selectedShape.isNull() && selectedButton.get()!=Buttons.EDIT) {
+                    rotationCircle.setVisible(false);
+                    selectedShape.value().setStroke(null);
+                    selectedShape.set(null);
+                }
+            });
+
+            addEventHandler(FileEvent.LOAD, event -> {
+                try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(event.getFile()))) {
+                    Utils.ShapeRepr[] arr = (Utils.ShapeRepr[]) in.readObject();
+                    getChildren().clear();
+                    getChildren().add(rotationCircle);
+                    for (Utils.ShapeRepr shapeRepr : arr) {
+                        getChildren().add(getChildren().size()-1, shapeRepr.recreate());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            addEventHandler(FileEvent.SAVE, event -> {
+                try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(event.getFile()))) {
+                    Utils.ShapeRepr[] arr = new Utils.ShapeRepr[getChildren().size()-1];
+                    for (int i=0; i<arr.length; i++) {
+                        arr[i] = ((Repr) getChildren().get(i)).createRepr();
+                    }
+                    out.writeObject(arr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            this.setOnMouseDragged(event -> {
+                mouseX.set(event.getX());
+                mouseY.set(event.getY());
+                
+                switch (selectedButton.get()) {
+                    case null -> {}
+                    
+                    case Buttons.EDIT -> {
+                        if (rotationCircle.getIsRotating()) { return; }
+
+                        if (!selectedShape.isNull() && selectedShape.value() instanceof Movable) {
+                            ((Movable) selectedShape.value()).move(event.getX(), event.getY());
+                        }
+                    }
+
+                    default -> {
+                        if (shapePreview != null) {
+                            if (selectedButton.get().shape().isInstance(shapePreview)) {
+                                ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
+                            } else {
+                                this.getChildren().remove(this.getChildren().size()-2);
+                                shapePreview = null;
+                            }
+                        }
+                        if (!selectedShape.isNull()) {
+                            rotationCircle.setVisible(false);
+                            selectedShape.value().setStroke(null);
+                            selectedShape.set(null);;
+                        }
+                    }
+                }       
+            });
+
+            this.setOnMouseExited(event -> {
+                mouseX.set(-1);
+                mouseY.set(-1);
+            });
+
+            this.setOnMousePressed(event -> {
+                switch (selectedButton.get()) {
+                    case null -> {}
+
+                    case Buttons.EDIT -> {
+                        // Select a shape
+                        for (int i=getChildren().size()-2; i>=0; i--) {
+                            Node node = getChildren().get(i);
+                            if (node instanceof Shape shape && shape.getBoundsInParent().contains(event.getX(), event.getY())) {
+                                if (!selectedShape.isNull()) { selectedShape.value().setStroke(null); }
+                                selectedShape.set(shape);
+                                if (selectedShape.value() instanceof Rotatable rotatable) {
+                                    rotationCircle.translateXProperty().bind(rotatable.rotationPivotXProperty());
+                                    rotationCircle.translateYProperty().bind(rotatable.rotationPivotYProperty());
+                                    rotationCircle.setVisible(true);
+                                } else {
+                                    rotationCircle.setVisible(false);
+                                }
+                                selectedShape.value().setStroke(Color.RED);
+                                break;
+                            }
+                        }
+
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            selectedShape.value().setFill(selectedColor.getValue());
+                        }
+                    }
+                
+                    default -> {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            if (shapePreview != null) {
+                                this.getChildren().remove(this.getChildren().size()-2);
+                                shapePreview = null;
+                            }
+                            return;
+                        }
+
+                        if (shapePreview == null) {
+                            shapePreview = Utils.createShape(selectedButton.getShape(), event.getX(), event.getY(), selectedColor.getValue());
+                            getChildren().add(getChildren().size()-1, shapePreview);
+                        } else {
+                            if (shapePreview instanceof Polygon polygon) {
+                                shapePreview = polygon.nextPoint(event.getX(), event.getY());
+                            } else {
+                                shapePreview = null;
+                            }
+                        }
+                    }
+                }
+            });
+
+            this.setOnScroll(event -> {
+                if (selectedButton.get() == Buttons.EDIT) {
+                    if (!selectedShape.isNull() && selectedShape.value() instanceof Resizable resizable) {
+                        resizable.resize(event.getDeltaY());
+                    }
+                }
+            });
+        }
+
+    }
 
     /**
-     * A custom menu button that updates a shared IntegerProperty when clicked.
+     * A custom menu button that updates a ButtonSelector when clicked.
      */
     public static class MenuButton extends Button {
         /**
          * Constructs a new MenuButton.
          *
          * @param text            the text displayed on the button
-         * @param id              the unique ID associated with this button
-         * @param selectedButton  a shared property representing the selected button's ID
+         * @param id              the ID associated with this button
+         * @param buttonSelector  a ButtonSelector to be bound to the button instance
          */
-        MenuButton(String text, Buttons shape, Buttons.ButtonSelector selectedButton) {
+        MenuButton(String text, Buttons id, Buttons.ButtonSelector buttonSelector) {
             super(text);
 
             this.setOnAction(event -> {
-                selectedButton.set(shape);
+                buttonSelector.set(id);
             });
         }
     }
-
 
     /**
      * A button that opens a child stage displaying information loaded from a file.
      */
     public static class InfoButton extends Button {
+        private final VBox content = new VBox();
+
         /**
          * Constructs an InfoButton that opens a window with content from a text file.
          *
-         * @param text        the name of the file (without extension) to load / button label
+         * @param text         the name of the file (without extension) to load and also button's label
          * @param primaryStage the parent stage for modal positioning
          * @param isOpen       property indicating whether the info window is already open
          */
         InfoButton(String text, Stage primaryStage, BooleanProperty isOpen) {
             super(text);
-
+            
+            try {
+                File file = new File("./resources/" + text + ".txt");
+                Scanner stream = new Scanner(file);
+                while (stream.hasNextLine()) {
+                    content.getChildren().add(new Label(stream.nextLine()));
+                }
+                
+                stream.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            content.setAlignment(Pos.CENTER);
+            
             this.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     if (!isOpen.get()) {
-                        VBox content = new VBox();
-                        try {
-                            File file = new File("./resources/" + text + ".txt");
-                            Scanner stream = new Scanner(file);
-                            while (stream.hasNextLine()) {
-                                content.getChildren().add(new Label(stream.nextLine()));
-                            }
-
-                            stream.close();
-                        } catch (FileNotFoundException e) {
-                            System.out.println("An error occurred.");
-                            e.printStackTrace();
-                        }
                         Stage infoStage = new ChildStage(content, primaryStage, isOpen);
                         infoStage.show();
                         isOpen.set(true);
@@ -218,7 +415,6 @@ public class App extends Application {
             });
         }
     }
-
 
     /**
      * A secondary window (child stage) for displaying informational content.
@@ -233,8 +429,9 @@ public class App extends Application {
          */
         ChildStage(VBox content, Stage owner, BooleanProperty isOpen) {
             super();
-            content.setAlignment(Pos.CENTER);
-            this.setScene(new Scene(content, 400, 400));
+            StackPane wrapper = new StackPane(content);
+            wrapper.setAlignment(Pos.CENTER);
+            this.setScene(new Scene(wrapper, 400, 400));
             this.setResizable(false);
             this.initOwner(owner);
             this.setOnCloseRequest(event -> {
@@ -242,173 +439,6 @@ public class App extends Application {
             });
         }
     }
-
-
-    /**
-     * A custom canvas pane for drawing and previewing Buttons (circle, rectangle, polygon).
-     */
-    public static class Canvas extends AnchorPane {
-        private javafx.scene.shape.Circle rotateCircle = null;
-        private Shape shapePreview = null;
-        private Shape selectedShape = null;
-        private DoubleProperty pivotX = new SimpleDoubleProperty();
-        private DoubleProperty pivotY = new SimpleDoubleProperty();
-        private boolean isRotating = false;
-
-        /**
-         * Constructs a new Canvas that tracks mouse events and allows shape drawing.
-         *
-         * @param mouseX         a property holding the current mouse X coordinate
-         * @param mouseY         a property holding the current mouse Y coordinate
-         * @param selectedButton an IntegerProperty representing the selected shape tool
-         */
-        Canvas(DoubleProperty mouseX, DoubleProperty mouseY, Buttons.ButtonSelector selectedButton, ColorPicker selectedColor) {
-            super();
-            rotateCircle = new javafx.scene.shape.Circle();
-            rotateCircle.setRadius(10);
-            rotateCircle.setFill(Color.BLUE);
-            rotateCircle.setStroke(Color.BLUE);
-            rotateCircle.centerXProperty().bind(pivotX);
-            rotateCircle.centerYProperty().bind(pivotY);
-            rotateCircle.setOnMouseDragged(event -> {
-                isRotating = true;
-                if (selectedShape instanceof Rotatable) {
-                    ((Rotatable) selectedShape).rotate(event.getX(), event.getY());
-                }
-             });
-             rotateCircle.setOnMouseReleased(event -> {
-                if (isRotating) { isRotating = false; }
-             });
-            this.getChildren().add(rotateCircle);
-
-            this.setOnMouseMoved(event -> {
-                mouseX.set(event.getX());
-                mouseY.set(event.getY());
-                    
-                    if (shapePreview != null) {
-                        if (selectedButton.get().shape().isInstance(shapePreview)) {
-                            ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
-                        } else {
-                            this.getChildren().remove(this.getChildren().size()-2);
-                            shapePreview = null;
-                        }
-                    }
-                });
-
-            this.setOnMouseDragged(event -> {
-                mouseX.set(event.getX());
-                mouseY.set(event.getY());
-
-                if (isRotating) { return; }
-
-                switch (selectedButton.get()) {
-                    case null -> {}
-
-                    case Buttons.EDIT -> {
-                        if (selectedShape != null && selectedShape instanceof Movable) {
-                            ((Movable) selectedShape).move(event.getX(), event.getY());
-                        }
-                    }
-
-                    default -> {
-                        if (shapePreview != null) {
-                            if (selectedButton.get().shape().isInstance(shapePreview)) {
-                                ((Previewable) shapePreview).preview(mouseX.get(), mouseY.get());
-                            } else {
-                                this.getChildren().remove(this.getChildren().size()-2);
-                                shapePreview = null;
-                            }
-                        }
-                    }
-                }       
-            });
-
-            this.setOnMouseExited(event -> {
-                mouseX.set(-1);
-                mouseY.set(-1);
-            });
-
-            this.setOnMousePressed(event -> {
-                switch (event.getButton()) {
-                    case PRIMARY -> {
-                        switch (selectedButton.get()) {
-                            case null -> {}
-                    
-                            case Buttons.EDIT -> {
-                                for (int i=getChildren().size()-2; i>=0; i--) {
-                                    Node node = getChildren().get(i);
-                                    if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
-                                        if (selectedShape!=null) { selectedShape.setStroke(null); }
-                                        selectedShape = shape;
-                                        if (selectedShape instanceof Rotatable) {
-                                            rotateCircle.centerXProperty().bind(((Rotatable) selectedShape).centerXProperty());
-                                            rotateCircle.centerYProperty().bind(((Rotatable) selectedShape).centerYProperty());
-                                        }
-                                        selectedShape.setStroke(Color.RED);
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            default -> {
-                                if (shapePreview == null) {
-                                    shapePreview = Utils.createShape(selectedButton.get().shape(), event.getX(), event.getY(), selectedColor.getValue());
-                                    this.getChildren().add(this.getChildren().size()-1, shapePreview);
-                                } else {
-                                    if (shapePreview instanceof Polygon) {
-                                        if (((Polygon) shapePreview).isNearStartPoint(event.getX(), event.getY())) {
-                                            ((Polygon) shapePreview).finish();
-                                            shapePreview = null;
-                                        } else {
-                                            ((Polygon) shapePreview).getPoints().addAll(event.getX(), event.getY());
-                                        }
-                                    } else {
-                                        shapePreview = null;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    case SECONDARY -> {
-                        switch (selectedButton.get()) {
-                            case null -> {}
-                    
-                            case Buttons.EDIT -> {
-                                for (int i=getChildren().size()-2; i>=0; i--) {
-                                    Node node = getChildren().get(i);
-                                    if (node instanceof Shape shape && shape.contains(event.getX(), event.getY())) {
-                                        shape.setFill(selectedColor.getValue());
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            default -> {
-                                if (shapePreview != null) {
-                                    this.getChildren().removeLast();
-                                    shapePreview = null;
-                                }
-                            }
-                        }
-                    }
-                
-                    default -> {}
-                    
-                }
-                
-            });
-
-            this.setOnScroll(event -> {
-                if (selectedButton.get() == Buttons.EDIT) {
-                    if (selectedShape != null && selectedShape instanceof Resizable) {
-                        ((Resizable) selectedShape).resize(event.getDeltaY());
-                    }
-                }
-            });
-        }
-    }
-
 
     /**
      * A status bar showing the current mouse coordinates in the format "X : Y".
@@ -434,4 +464,75 @@ public class App extends Application {
         }
     }
 
+    /**
+     * A circle used as the input method for shape rotation.
+     */
+    private static class RotationCircle extends javafx.scene.shape.Circle {
+        /**
+         * Flag indicating whether the shape is being rotated.
+         */
+        private boolean isRotating = false;
+
+        /**
+         * Constructs a RotationCircle binding it to a shape selector.
+         * 
+         * @param selectedShape shape selector pointer
+         */
+        public RotationCircle(Utils.Pointer<Shape> selectedShape) {
+            super();
+            setRadius(20);
+            setFill(null);
+            setStroke(Color.BLUE);
+            setStrokeWidth(10);
+            setOnMouseDragged(event -> {
+                isRotating = true;
+                if (selectedShape.value() instanceof Rotatable) { ((Rotatable) selectedShape.value()).rotate(event.getX(), event.getY()); }
+            });
+            setOnMouseReleased(event -> {
+                if (isRotating) { isRotating = false; }
+            });
+            setVisible(false);
+        }
+
+        /**
+         * Returns whether the shape is being rotated.
+         * 
+         * @return {@code true} if shape is being rotated, otherwise {@code false}
+         */
+        public boolean getIsRotating() {
+            return isRotating;
+        }
+    }
+    
+    /**
+     * A custom used for save/load functionality. 
+     */
+    public static class FileEvent extends Event {
+        /** FileEvent variant representing save operation */
+        public static final EventType<FileEvent> SAVE = new EventType<>(Event.ANY, "SAVE");
+        /** FileEvent variant representing save operation */
+        public static final EventType<FileEvent> LOAD = new EventType<>(Event.ANY, "LOAD");
+        /** Selected file to save into/load from */
+        private final File file;
+
+        /**
+         * Constructs a FileEvent of specified type
+         * 
+         * @param eventType type of the event
+         * @param file      selected file
+         */
+        public FileEvent(EventType<? extends FileEvent> eventType, File file) {
+            super(eventType);
+            this.file = file;
+        }
+
+        /**
+         * Returns the file to save into/load from
+         * 
+         * @return the file object
+         */
+        public File getFile() {
+            return file;
+        }
+    }
 }

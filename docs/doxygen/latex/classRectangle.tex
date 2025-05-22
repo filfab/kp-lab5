@@ -1,0 +1,208 @@
+\doxysection{Rectangle Class Reference}
+\hypertarget{classRectangle}{}\label{classRectangle}\index{Rectangle@{Rectangle}}
+
+
+Inheritance diagram for Rectangle\+:
+% FIG 0
+
+
+Collaboration diagram for Rectangle\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classRectangle_afb13134ad65f2e584cc9ce25a0bdc378}{Rectangle}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classRectangle_aa918806c4950a46127f1157a5a07dff6}{move}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classRectangle_aa359d46270693b39760ea4165a0e49f3}{resize}} (double amount)
+\item 
+void \mbox{\hyperlink{classRectangle_a9db08423f4f31008ea61bf2ad78fc29e}{rotate}} (double x, double y)
+\item 
+void \mbox{\hyperlink{classRectangle_a83c08af6d55db40845b7c94ce0ed782a}{preview}} (double x, double y)
+\item 
+Double\+Property \mbox{\hyperlink{classRectangle_aaa6fa01a333b847f06079ceb610e6604}{rotation\+Pivot\+XProperty}} ()
+\item 
+Double\+Property \mbox{\hyperlink{classRectangle_a540d35c5c24413a01ef9684a5c5d9621}{rotation\+Pivot\+YProperty}} ()
+\item 
+Utils.\+Shape\+Repr \mbox{\hyperlink{classRectangle_af6ea2d8efd77dddaa33f619530889ddd}{create\+Repr}} ()
+\item 
+void \mbox{\hyperlink{classRectangle_a1dff0d279086eaf0673d669867e3a729}{recreate}} (Double\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A custom {\ttfamily \doxylink{}{javafx.\+scene.\+shape.\+Rectangle}} that supports dynamic transformations such as moving, resizing, rotating, and previewing. This class is designed for interactive graphical applications where user-\/defined manipulations of shapes are needed.
+
+The rectangle maintains an internal pivot point which serves as a reference for operations such as previewing (e.\+g., drawing a rectangle dynamically on drag).
+
+This class implements the following interfaces\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily Movable} -\/ for repositioning the rectangle based on a center point. 
+\item {\ttfamily Resizable} -\/ for proportionally resizing the rectangle. 
+\item {\ttfamily Rotatable} -\/ for applying rotation to the rectangle. 
+\item {\ttfamily Previewable} -\/ for dynamically adjusting rectangle bounds based on user input. 
+\end{DoxyItemize}
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classRectangle_afb13134ad65f2e584cc9ce25a0bdc378}\label{classRectangle_afb13134ad65f2e584cc9ce25a0bdc378} 
+\index{Rectangle@{Rectangle}!Rectangle@{Rectangle}}
+\index{Rectangle@{Rectangle}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{Rectangle()}{Rectangle()}}
+{\footnotesize\ttfamily Rectangle.\+Rectangle (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a new {\ttfamily Rectangle} with a pivot point at the specified coordinates. The initial width and height are set to 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the pivot point and rectangle origin \\
+\hline
+{\em y} & the Y coordinate of the pivot point and rectangle origin \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classRectangle_af6ea2d8efd77dddaa33f619530889ddd}\label{classRectangle_af6ea2d8efd77dddaa33f619530889ddd} 
+\index{Rectangle@{Rectangle}!createRepr@{createRepr}}
+\index{createRepr@{createRepr}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{createRepr()}{createRepr()}}
+{\footnotesize\ttfamily Utils.\+Shape\+Repr Rectangle.\+create\+Repr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructs a serialization-\/ready representation of the rectangle.
+
+\begin{DoxyReturn}{Returns}
+Serialization-\/ready representation of the rectangle 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_a1270e2b4bf4ea47f490c46a9bb306266}{Repr}}.
+
+\Hypertarget{classRectangle_aa918806c4950a46127f1157a5a07dff6}\label{classRectangle_aa918806c4950a46127f1157a5a07dff6} 
+\index{Rectangle@{Rectangle}!move@{move}}
+\index{move@{move}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{move()}{move()}}
+{\footnotesize\ttfamily void Rectangle.\+move (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Moves the rectangle such that its center is positioned at the specified coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the new X coordinate for the rectangle\textquotesingle{}s center \\
+\hline
+{\em y} & the new Y coordinate for the rectangle\textquotesingle{}s center \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceMovable_aeb8ba9ca896d6d91f876a33c63240abb}{Movable}}.
+
+\Hypertarget{classRectangle_a83c08af6d55db40845b7c94ce0ed782a}\label{classRectangle_a83c08af6d55db40845b7c94ce0ed782a} 
+\index{Rectangle@{Rectangle}!preview@{preview}}
+\index{preview@{preview}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{preview()}{preview()}}
+{\footnotesize\ttfamily void Rectangle.\+preview (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Updates the rectangle\textquotesingle{}s position and dimensions to preview a bounding box from the pivot point to the given coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate of the opposite corner from the pivot \\
+\hline
+{\em y} & the Y coordinate of the opposite corner from the pivot \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff}{Previewable}}.
+
+\Hypertarget{classRectangle_a1dff0d279086eaf0673d669867e3a729}\label{classRectangle_a1dff0d279086eaf0673d669867e3a729} 
+\index{Rectangle@{Rectangle}!recreate@{recreate}}
+\index{recreate@{recreate}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{recreate()}{recreate()}}
+{\footnotesize\ttfamily void Rectangle.\+recreate (\begin{DoxyParamCaption}\item[{Double\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\doxylink{classRectangle}{Rectangle} scpecific recreation step.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & array of shape specific parameters \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceRepr_aca73ccec1a313681cb59059cef12121f}{Repr}}.
+
+\Hypertarget{classRectangle_aa359d46270693b39760ea4165a0e49f3}\label{classRectangle_aa359d46270693b39760ea4165a0e49f3} 
+\index{Rectangle@{Rectangle}!resize@{resize}}
+\index{resize@{resize}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily void Rectangle.\+resize (\begin{DoxyParamCaption}\item[{double}]{amount }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Resizes the rectangle by scaling both width and height proportionally. The rectangle grows or shrinks while maintaining its center.
+
+
+\begin{DoxyParams}{Parameters}
+{\em amount} & the scaling factor; positive to increase size, negative to decrease \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceResizable_a79886d3e3ffdbaba0533a2fb8b5090b7}{Resizable}}.
+
+\Hypertarget{classRectangle_a9db08423f4f31008ea61bf2ad78fc29e}\label{classRectangle_a9db08423f4f31008ea61bf2ad78fc29e} 
+\index{Rectangle@{Rectangle}!rotate@{rotate}}
+\index{rotate@{rotate}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{rotate()}{rotate()}}
+{\footnotesize\ttfamily void Rectangle.\+rotate (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Rotates the rectangle by calculating an angle based given point (x,y).
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the x coordinate \\
+\hline
+{\em y} & the y coordinate \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_a1624252784acf781f3e59317e1cf228a}{Rotatable}}.
+
+\Hypertarget{classRectangle_aaa6fa01a333b847f06079ceb610e6604}\label{classRectangle_aaa6fa01a333b847f06079ceb610e6604} 
+\index{Rectangle@{Rectangle}!rotationPivotXProperty@{rotationPivotXProperty}}
+\index{rotationPivotXProperty@{rotationPivotXProperty}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{rotationPivotXProperty()}{rotationPivotXProperty()}}
+{\footnotesize\ttfamily Double\+Property Rectangle.\+rotation\+Pivot\+XProperty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the property holding rectangle\textquotesingle{}s rotation pivot X coordinate.
+
+\begin{DoxyReturn}{Returns}
+rectangle\textquotesingle{}s rotation\+PivotX property 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_a58a551238af732f3ec3ed48c5f363a3e}{Rotatable}}.
+
+\Hypertarget{classRectangle_a540d35c5c24413a01ef9684a5c5d9621}\label{classRectangle_a540d35c5c24413a01ef9684a5c5d9621} 
+\index{Rectangle@{Rectangle}!rotationPivotYProperty@{rotationPivotYProperty}}
+\index{rotationPivotYProperty@{rotationPivotYProperty}!Rectangle@{Rectangle}}
+\doxysubsubsection{\texorpdfstring{rotationPivotYProperty()}{rotationPivotYProperty()}}
+{\footnotesize\ttfamily Double\+Property Rectangle.\+rotation\+Pivot\+YProperty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the property holding rectangle\textquotesingle{}s rotation pivot Y coordinate.
+
+\begin{DoxyReturn}{Returns}
+rectangle\textquotesingle{}s rotation\+PivotY property 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceRotatable_ae14d4b1fc8354b051a8174427c900878}{Rotatable}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Rectangle.\+java\end{DoxyCompactItemize}

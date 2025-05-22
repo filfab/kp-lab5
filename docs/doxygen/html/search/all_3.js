@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main_0',['main',['../classApp.html#a941972c4be68395f473d23f1cbf101a7',1,'App']]]
+  ['distance_0',['distance',['../classUtils.html#ad09bfb6f69bc62bd8ce81437bea2540c',1,'Utils']]]
 ];

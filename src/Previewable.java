@@ -10,5 +10,5 @@ public interface Previewable {
      * @param x the X coordinate representing one corner or reference point
      * @param y the Y coordinate representing the opposite corner or reference point
      */
-    void preview(double arg0, double arg1);
+    void preview(double x, double y);
 }

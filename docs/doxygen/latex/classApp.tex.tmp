@@ -1,0 +1,72 @@
+\doxysection{App Class Reference}
+\hypertarget{classApp}{}\label{classApp}\index{App@{App}}
+
+
+Inheritance diagram for App\+:
+% FIG 0
+
+
+Collaboration diagram for App\+:
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class {\bfseries Canvas}
+\item 
+class {\bfseries Child\+Stage}
+\item 
+class {\bfseries Cords}
+\item 
+class {\bfseries File\+Event}
+\item 
+class {\bfseries Info\+Button}
+\item 
+class {\bfseries Menu\+Button}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classApp_a14f96fec777e7378468d39e351e6a115}{start}} (Stage \+\_\+primary\+Stage)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{classApp_a941972c4be68395f473d23f1cbf101a7}{main}} (String\mbox{[}$\,$\mbox{]} args)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Javafx application 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classApp_a941972c4be68395f473d23f1cbf101a7}\label{classApp_a941972c4be68395f473d23f1cbf101a7} 
+\index{App@{App}!main@{main}}
+\index{main@{main}!App@{App}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily static void App.\+main (\begin{DoxyParamCaption}\item[{String\mbox{[}$\,$\mbox{]}}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+The main entry point for the Java\+FX application.
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & command-\/line arguments \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classApp_a14f96fec777e7378468d39e351e6a115}\label{classApp_a14f96fec777e7378468d39e351e6a115} 
+\index{App@{App}!start@{start}}
+\index{start@{start}!App@{App}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void App.\+start (\begin{DoxyParamCaption}\item[{Stage}]{\+\_\+primary\+Stage }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Starts the Java\+FX application. Sets the scene and shows the primary stage.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+primary\+Stage} & the primary stage provided by the Java\+FX runtime \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/App.\+java\end{DoxyCompactItemize}

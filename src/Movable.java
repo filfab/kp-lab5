@@ -9,5 +9,5 @@ public interface Movable {
      * @param x the new X coordinate (typically the center or anchor point)
      * @param y the new Y coordinate (typically the center or anchor point)
      */
-    void move(double arg0, double arg1);
+    void move(double x, double y);
 }

@@ -1,0 +1,41 @@
+\doxysection{Previewable Interface Reference}
+\hypertarget{interfacePreviewable}{}\label{interfacePreviewable}\index{Previewable@{Previewable}}
+
+
+Inheritance diagram for Previewable\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff}{preview}} (double x, double y)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+An interface for 2D shape objects that can show a temporary or preview state, such as during interactive drawing or resizing. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff}\label{interfacePreviewable_a889052073ecb7b90addadfdf7ae509ff} 
+\index{Previewable@{Previewable}!preview@{preview}}
+\index{preview@{preview}!Previewable@{Previewable}}
+\doxysubsubsection{\texorpdfstring{preview()}{preview()}}
+{\footnotesize\ttfamily void Previewable.\+preview (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+Updates the preview bounds or dimensions based on the provided coordinates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & the X coordinate representing one corner or reference point \\
+\hline
+{\em y} & the Y coordinate representing the opposite corner or reference point \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classCircle_a5f8223875c2e45b0284f6f7f1ec6e02c}{Circle}}, \mbox{\hyperlink{classPolygon_a6f1afd36c028336a79a8da54adf75406}{Polygon}}, and \mbox{\hyperlink{classRectangle_a83c08af6d55db40845b7c94ce0ed782a}{Rectangle}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Previewable.\+java\end{DoxyCompactItemize}

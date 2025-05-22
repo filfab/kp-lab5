@@ -1,6 +1,6 @@
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 
 /**
  * A custom {@link javafx.scene.shape.Polygon} that supports dynamic transformations
@@ -15,13 +15,10 @@ import javafx.collections.ObservableList;
  *   <li>{@code Previewable} - for dynamically adjusting rectangle bounds based on user input.</li>
  * </ul>
  */
-public class Polygon extends javafx.scene.shape.Polygon implements Movable, Resizable, Rotatable, Previewable {
+public class Polygon extends javafx.scene.shape.Polygon implements Movable, Resizable, Rotatable, Previewable, Repr {
 
-    /** Shape center's X coordinate, used as a reference point for rotating */
-    private final DoubleProperty centerX = new SimpleDoubleProperty(0);
-
-    /** Shape center's Y coordinate, used as a reference point for rotating */
-    private final DoubleProperty centerY = new SimpleDoubleProperty(0);
+    private final DoubleProperty rotationPivotX = new SimpleDoubleProperty();
+    private final DoubleProperty rotationPivotY = new SimpleDoubleProperty();
 
     /**
      * Constructs a new {@code Polygon} with doubled points at specified coordinates.
@@ -31,47 +28,48 @@ public class Polygon extends javafx.scene.shape.Polygon implements Movable, Resi
      * @param y the Y coordinate of the polygon origin
      */
     public Polygon(double x, double y) {
-        super(x, y, x, y);
+        super(0.0, 0.0, 0.0, 0.0);
+        setTranslateX(x);
+        setTranslateY(y);
     }
 
     /**
-     * Moves the polygon such that //TODO
+     * Moves the polygon such that it's centroid is at point (x,y).
      *
      * @param x the new X coordinate for the rectangle's center
      * @param y the new Y coordinate for the rectangle's center
      */
     @Override
     public void move(double x, double y) {
-        ObservableList<Double> points = this.getPoints();
-        double deltaX = x - this.centerX.get();
-        double deltaY = y - this.centerY.get();
-        centerX.set(centerX.get() + deltaX);
-        centerY.set(centerY.get() + deltaY);
-        for (int i=0; i<points.size(); i=i+2) {
-            points.set(i, points.get(i)+deltaX);
-            points.set(i+1, points.get(i+1)+deltaY);
-        }
+        setTranslateX(x);
+        setTranslateY(y);
     }
 
     /**
-     * Resizes the polygon by scaling both width and height proportionally.
-     * The rectangle grows or shrinks while maintaining its center.//TODO
+     * Resizes the polygon by scaling it by given factor.
      *
      * @param amount the scaling factor; positive to increase size, negative to decrease
      */
     @Override
-    public void resize(double ammount) {
-        //TODO: polygon resize
+    public void resize(double amount) {
+        double scale = amount > 0 ? 1.05 : 0.95;
+        setScaleX(this.getScaleX() * scale);
+        setScaleY(this.getScaleY() * scale);
     }
 
     /**
-     * Rotates the polygon by adding a scaled rotation amount to its current angle.
-     *
-     * @param angle the amount to rotate (scaled internally by 0.1)
+     * Rotates the polygon by calculating an angle based given point (x,y).
+     * 
+     * @param x the x coordinate
+     * @param y the y coordinate
      */
     @Override
     public void rotate(double x, double y) {
-        this.setRotate(Math.toDegrees(-Math.atan((centerX.get()-x)/(centerY.get()-y))));
+        if (y < 0) {
+            this.setRotate(Math.toDegrees(-Math.atan(x/y)));
+        } else {
+            this.setRotate(Math.toDegrees(-Math.atan(x/y)) + 180);
+        }
     }
 
     /**
@@ -83,8 +81,8 @@ public class Polygon extends javafx.scene.shape.Polygon implements Movable, Resi
      */
     @Override
     public void preview(double x, double y) {
-        this.getPoints().set(this.getPoints().size()-2, x);
-        this.getPoints().set(this.getPoints().size()-1, y);
+        this.getPoints().set(this.getPoints().size()-2, x-getTranslateX());
+        this.getPoints().set(this.getPoints().size()-1, y-getTranslateY());
     }
 
     /**
@@ -94,30 +92,89 @@ public class Polygon extends javafx.scene.shape.Polygon implements Movable, Resi
      * @param y the Y coordinate of the point to test
      * @return {@code true} if the point is near the starting point (within 10 units), {@code false} otherwise
      */
-    public boolean isNearStartPoint(double x, double y) {
-        return Utils.distance(x, y, this.getPoints().get(0), this.getPoints().get(1)) < 10;
-    }
-
-    public void finish() {
-        this.getPoints().removeLast();
-        this.getPoints().removeLast();
-        for (int i=0; i<this.getPoints().size(); i=i+2) {
-            centerX.set(centerX.get() + this.getPoints().get(i));
-            centerY.set(centerY.get() + this.getPoints().get(i+1));
+    public Polygon nextPoint(double x, double y) {
+        if (Utils.distance(x, y, getTranslateX(), getTranslateY()) < 10) {
+            getPoints().removeLast();
+            getPoints().removeLast();
+            updateCentroid();
+            return null;
+        } else {
+            getPoints().addAll(x, y);
+            return this;
         }
-        centerX.set(centerX.get()/this.getPoints().size()*2);
-        centerY.set(centerY.get()/this.getPoints().size()*2);
-
     }
 
+    /**
+     * Returns the property holding polygon's rotation pivot X coordinate.
+     * 
+     * @return polygon's rotationPivotX property
+     */
     @Override
-    public DoubleProperty centerXProperty() {
-        return centerX;
+    public DoubleProperty rotationPivotXProperty() {
+        return rotationPivotX;
     }
 
+    /**
+     * Returns the property holding polygon's rotation pivot Y coordinate.
+     * 
+     * @return polygon's rotationPivotY property
+     */
     @Override
-    public DoubleProperty centerYProperty() {
-        return centerY;
+    public DoubleProperty rotationPivotYProperty() {
+        return rotationPivotY;
     }
-    
+
+    /**
+     * Updates the centroid (geometric center) of the shape based on its point list,
+     * and re-binds the rotation pivot properties to follow the shape's translation
+     * offset plus the calculated centroid.
+     */
+    private void updateCentroid() {
+        double x = 0;
+        double y = 0;
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            x += getPoints().get(i);
+            y += getPoints().get(i+1);
+        }
+        rotationPivotX.bind(translateXProperty().add(x/getPoints().size()*2));
+        rotationPivotY.bind(translateYProperty().add(y/getPoints().size()*2));
+    }
+
+    /**
+     * Constructs a serialization-ready representation of the polygon.
+     * 
+     * @return Serialization-ready representation of the polygon
+     */
+    @Override
+    public Utils.ShapeRepr createRepr() {
+        Utils.ShapeRepr repr = new Utils.ShapeRepr();
+        repr.shapeType = Polygon.class;
+        repr.color = ((Color) getFill()).toString();
+        repr.x = getTranslateX();
+        repr.y = getTranslateY();
+        repr.angle = getRotate();
+        repr.scale = getScaleX();
+        repr.args = new Double[getPoints().size()+2];
+        repr.args[0] = rotationPivotX.get() - translateXProperty().get();
+        repr.args[1] = rotationPivotY.get() - translateYProperty().get();
+        for (int i=2; i<repr.args.length; i++) {
+            repr.args[i] = getPoints().get(i-2);
+        }
+
+        return repr;
+    }
+
+    /**
+     * Polygon scpecific recreation step.
+     * 
+     * @param args array of shape specific parameters
+     */
+    @Override
+    public void recreate(Double[] args) {
+        rotationPivotX.bind(translateXProperty().add(args[0]));
+        rotationPivotY.bind(translateYProperty().add(args[1]));
+        for (int i = 2; i < args.length; i++) {
+            getPoints().add(args[i]); 
+        }
+    }
 }

@@ -6,14 +6,25 @@ import javafx.beans.property.DoubleProperty;
 public interface Rotatable {
 
     /**
-     * Rotates the object by a given angle or factor.
+     * Rotates the object by a given an point (x,y).
      * 
-     * @param angle the amount to rotate (implementation may scale or interpret as degrees/radians)
+     * @param x the x coordinate
+     * @param y the y coordinate
      */
     void rotate(double x, double y);
 
-    DoubleProperty centerXProperty();
+    /**
+     * Returns the property holding X coordinate of object's rotation pivot.
+     * 
+     * @return object's rotationPivotX field
+     */
+    DoubleProperty rotationPivotXProperty();
 
-    DoubleProperty centerYProperty();
+    /**
+     * Returns the property holding Y coordinate of object's rotation pivot.
+     * 
+     * @return object's rotationPivotY field
+     */
+    DoubleProperty rotationPivotYProperty();
 
 }

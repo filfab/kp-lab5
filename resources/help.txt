@@ -2,16 +2,18 @@ INSTRUKCJA UŻYTKOWNIKA
 
 Rysowanie:
 1. Wybierz figurę do rysowania:
--- "circle" - koło
--- "rect" - prostokąt
--- "poly" - wielokąt
-2.
+2. Zaznacz pierwszy punkt
 3. LPM zatwierdza figurę, RPM anuluje
 
 Edycja:
 1. "edit" przełącza w tryb edytowania
 2. RPM zmienia kolor wskazanej figury
-Zapisywanie:
+3. Po wybraniu figury można ją 
+* przemieścić klikając lub przesuwając
+* zmienić rozmiar scrollem
+* obrócić korzystając z koła obrotu
+
+Przyciski save/load pozwalają na zapisanie/wczytanie z pliku
 
 Dodatkowe informacje:
 1. "info" - nazwa, opis i autor

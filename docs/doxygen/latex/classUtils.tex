@@ -3,31 +3,50 @@
 \doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class {\bfseries Canvas}
+class {\bfseries Pointer}
 \item 
-class {\bfseries Child\+Stage}
-\item 
-class {\bfseries Cords}
-\item 
-class {\bfseries Info\+Button}
-\item 
-class {\bfseries Menu\+Button}
-\item 
-class {\bfseries Pivoting\+Rectangle}
+class {\bfseries Shape\+Repr}
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 static double \mbox{\hyperlink{classUtils_ad09bfb6f69bc62bd8ce81437bea2540c}{distance}} (double x0, double y0, double x1, double y1)
+\item 
+static Shape \mbox{\hyperlink{classUtils_aa3a7f489a77153bc4cfd901e519a032d}{create\+Shape}} (Class$<$?$>$ clazz, double x, double y, Color color)
 \end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+Static class containing utility functions 
+
 \doxysubsection{Member Function Documentation}
+\Hypertarget{classUtils_aa3a7f489a77153bc4cfd901e519a032d}\label{classUtils_aa3a7f489a77153bc4cfd901e519a032d} 
+\index{Utils@{Utils}!createShape@{createShape}}
+\index{createShape@{createShape}!Utils@{Utils}}
+\doxysubsubsection{\texorpdfstring{createShape()}{createShape()}}
+{\footnotesize\ttfamily static Shape Utils.\+create\+Shape (\begin{DoxyParamCaption}\item[{Class$<$?$>$}]{clazz,  }\item[{double}]{x,  }\item[{double}]{y,  }\item[{Color}]{color }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Initializes given shape at point (x,y) and provided color.
+
+
+\begin{DoxyParams}{Parameters}
+{\em clazz} & shape to be initialized \\
+\hline
+{\em x} & origin x coordinate \\
+\hline
+{\em y} & origin y coordinate \\
+\hline
+{\em color} & shape\textquotesingle{}s fill color \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily Shape} initialazed with given parameters, or {\ttfamily null} initialization was unsuccessfull 
+\end{DoxyReturn}
 \Hypertarget{classUtils_ad09bfb6f69bc62bd8ce81437bea2540c}\label{classUtils_ad09bfb6f69bc62bd8ce81437bea2540c} 
 \index{Utils@{Utils}!distance@{distance}}
 \index{distance@{distance}!Utils@{Utils}}
 \doxysubsubsection{\texorpdfstring{distance()}{distance()}}
-{\footnotesize\ttfamily static double Utils.\+distance (\begin{DoxyParamCaption}\item[{double}]{x0,  }\item[{double}]{y0,  }\item[{double}]{x1,  }\item[{double}]{y1 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+{\footnotesize\ttfamily static double Utils.\+distance (\begin{DoxyParamCaption}\item[{double}]{x0,  }\item[{double}]{y0,  }\item[{double}]{x1,  }\item[{double}]{y1 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
 
 Calculates the Euclidean distance between two points.
 
@@ -49,4 +68,4 @@ the distance between the points (x0, y0) and (x1, y1)
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-src/\mbox{\hyperlink{Utils_8java}{Utils.\+java}}\end{DoxyCompactItemize}
+src/Utils.\+java\end{DoxyCompactItemize}
